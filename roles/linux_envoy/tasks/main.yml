@@ -1,0 +1,21 @@
+---
+- name: Set become
+  set_fact:
+    become_user: false
+  when:
+    - ansible_user == 'root'
+  tags:
+    - always
+
+- name: Include task to install envoy
+  include_tasks: task_envoy.yaml
+  when: "'envoy' in group_names"
+  tags:
+    - initial
+
+- name: Include task to install envoy
+  include_tasks: task_envoy.yaml
+  when: "'envoy' in group_names"
+  tags:
+    - initial
+    - update

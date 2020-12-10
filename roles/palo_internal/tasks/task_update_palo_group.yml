@@ -1,0 +1,97 @@
+---
+- name: Create list of external FQDN tags
+  set_fact:
+    external_fqdn_tags: "{{ external_fqdn | map(attribute='tags')|list|flatten |unique }}"
+    external_network_tags: "{{ external_networks | map(attribute='tags')|list|flatten |unique }}"
+    external_hosts_tags: "{{ external_hosts | map(attribute='tags')|list|flatten |unique }}"
+
+- name: Create external FQDN tags
+  panos_tag_object:
+    provider: '{{ palo_provider }}'
+    name: '{{ item }}'
+    color: 'red'
+    comments: '{{ item }}'
+    commit: no
+  loop:  "{{external_fqdn_tags + external_network_tags + external_hosts_tags}}"
+
+- name: Create external FQDN objects
+  panos_address_object:
+    provider: '{{ palo_provider }}'
+    name: 'fqdn-{{ item.name }}'
+    address_type: 'fqdn'
+    value: '{{item.value}}'
+    description: '{{item.desc}}'
+    tag: '{{item.tags}}'
+    commit: no
+  loop: '{{ external_fqdn }}'
+
+- name: Create external Network objects
+  panos_address_object:
+    provider: '{{ palo_provider }}'
+    name: 'network-{{ item.name }}'
+    address_type: 'ip-netmask'
+    value: '{{item.value}}'
+    description: '{{item.desc}}'
+    tag: '{{item.tags}}'
+    commit: no
+  loop: '{{ external_networks }}'
+
+- name: Create external Host objects
+  panos_address_object:
+    provider: '{{ palo_provider }}'
+    name: 'host-{{ item.name }}'
+    address_type: 'ip-netmask'
+    value: '{{item.value}}'
+    description: '{{item.desc}}'
+    tag: '{{item.tags}}'
+    commit: no
+  loop: '{{ external_hosts }}'
+
+- name: Create list of internal host tags
+  set_fact:
+    internal_host_tags: "{{ internal_hosts | map(attribute='tags')|list|flatten |unique }}"
+
+- name: Create internal host tags
+  panos_tag_object:
+    provider: '{{ palo_provider }}'
+    name: '{{ item }}'
+    color: 'green'
+    comments: '{{ item }}'
+    commit: no
+  loop: "{{internal_host_tags}}"
+
+- name: Create internal host objects
+  panos_address_object:
+    provider: '{{ palo_provider }}'
+    name: 'host-{{ item.name }}'
+    address_type: 'ip-netmask'
+    value: '{{item.value}}'
+    description: '{{item.desc}}'
+    tag: '{{item.tags}}'
+    commit: no
+  loop: '{{ internal_hosts }}'
+
+- name: Create list of internal network tags
+  set_fact:
+    internal_network_tags: "{{ internal_networks | map(attribute='tags')|list|flatten |unique }}"
+
+- name: Create internal network tag
+  panos_tag_object:
+    provider: '{{ palo_provider }}'
+    name: '{{ item }}'
+    color: 'green'
+    comments: '{{ item }}'
+    commit: no
+  loop: "{{internal_network_tags}}"
+
+- name: Create internal network objects
+  panos_address_object:
+    provider: '{{ palo_provider }}'
+    name: 'network-{{ item.name }}'
+    address_type: 'ip-netmask'
+    value: '{{item.value}}'
+    description: '{{item.desc}}'
+    tag: '{{item.tags}}'
+    commit: no
+  loop: '{{ internal_networks }}'
+

@@ -1,0 +1,15 @@
+---
+
+- hosts: debian,internal_ubuntu,internal_raspbian
+  gather_facts: True
+  vars_files:
+    - ~/ansible_data/vars/docker.yml
+    - ~/ansible_data/vars/envoy.yml
+  roles:
+    - role: linux_baseline
+    - role: linux_update
+    - role: linux_system
+    - role: linux_snmp
+    - role: linux_metricbeat
+    - role: linux_docker
+    - role: linux_envoy

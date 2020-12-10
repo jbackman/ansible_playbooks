@@ -1,0 +1,33 @@
+---
+
+- hosts: palo
+  connection: local
+  gather_facts: False
+
+  vars_files:
+    - ~/ansible_data/credentials.yml
+    - ~/ansible_data/vars/internal.yml
+    - ~/ansible_data/vars/external.yml
+
+  roles:
+    - role: paloaltonetworks.paloaltonetworks
+      tags:  
+        - uptime_robot
+        - cloudflare
+        - bloomberg
+        - internal
+    - role: palo_uptime_robot 
+      tags: 
+        - uptime_robot 
+    - role: palo_cloudflare
+      tags: 
+        - cloudflare
+    - role: palo_internal
+      tags: 
+        - internal
+    - role: palo_commit
+      tags:  
+        - uptime_robot
+        - cloudflare
+        - bloomberg
+        - internal

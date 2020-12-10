@@ -1,0 +1,17 @@
+---
+
+- name: Add GPG key for armv71
+  apt_key:
+    url: https://raw.githubusercontent.com/RaoulDuke-Esq/Beats-Pi/master/beats-pi.gpg.key
+    state: present 
+  become: "{{ become_user | default(true) }}"
+  tags:
+    - always
+
+- name: Add metricbeat repository
+  apt_repository:
+    repo: "deb https://raw.githubusercontent.com/RaoulDuke-Esq/Beats-Pi/master buster main"
+    state: present
+  become: "{{ become_user | default(true) }}"
+  tags:
+    - always

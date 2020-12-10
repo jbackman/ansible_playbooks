@@ -1,0 +1,14 @@
+[Unit]
+Description=Envoy
+After=network.target
+[Service]
+User=root
+Type=simple
+ExecStart=/etc/envoy/hot-restarter.py /etc/envoy/start-envoy.sh
+ExecStartPre=/etc/envoy/check_envoy.sh
+ExecReload=/etc/envoy/reload_envoy.sh $MAINPID
+ExecStop=/bin/kill -15 $MAINPID
+TimeoutStopSec=10
+KillMode=process
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,9 @@
+---
+
+- hosts: envoy
+  gather_facts: True
+
+  vars_files:
+    - ~/ansible_data/vars/envoy.yml
+  roles:
+    - role: linux_envoy

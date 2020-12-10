@@ -1,0 +1,4 @@
+{% if kernel_modules is defined %}
+{% for item in kernel_modules %}{{ item }}
+{% endfor %}
+{% endif %}

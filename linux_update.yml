@@ -1,0 +1,7 @@
+---
+
+- hosts: debian,internal_ubuntu,internal_raspbian
+  gather_facts: True
+
+  roles:
+    - role: linux_update

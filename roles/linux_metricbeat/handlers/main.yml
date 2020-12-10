@@ -1,0 +1,8 @@
+---
+- name: restart metricbeat
+  systemd:
+    name: metricbeat
+    state: restarted
+  become: "{{ become_user | default(true) }}"
+  tags:
+    - always

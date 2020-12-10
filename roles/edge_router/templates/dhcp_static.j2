@@ -1,0 +1,29 @@
+# ==== BEGIN DHCP NETWORK CONFIGURATION ==== #
+{% for network in config.networks %}
+{% set outer_loop = loop %}
+
+# -- Network-specific options -- #
+set service dhcp-server shared-network-name {{ network.name }} authoritative enable
+set service dhcp-server shared-network-name {{ network.name }} subnet {{ network.cidr_block }} default-router {{ network.dhcp.def_gateway }}
+{% for nameserver in network.dhcp.nameservers %}
+set service dhcp-server shared-network-name {{ network.name }} subnet {{ network.cidr_block }} dns-server {{ nameserver }}
+{% endfor %}
+set service dhcp-server shared-network-name {{ network.name }} subnet {{ network.cidr_block }} lease {{ network.dhcp.lease_ttl }}
+set service dhcp-server shared-network-name {{ network.name }} subnet {{ network.cidr_block }} start {{ network.dhcp.start }} stop {{ network.dhcp.end }}
+
+# -- Static leases for network -- #
+{% for lease in lookup('vars', network.dhcp.static) %}
+{% if lease.mac_address is defined %}
+set service dhcp-server shared-network-name {{ network.name }} subnet {{ network.cidr_block }} static-mapping {{ lease.name }} ip-address {{ lease.value }}
+set service dhcp-server shared-network-name {{ network.name }} subnet {{ network.cidr_block }} static-mapping {{ lease.name }} mac-address '{{ lease.mac_address }}'
+{% endif %}
+{% endfor %}
+{% endfor %}
+# ==== END DHCP CONFIGURATION ==== #
+
+# ==== Complete generic DNS/DHCP setup options ==== #
+# -- Global DNS options -- #
+set service dhcp-server disabled false
+set service dhcp-server hostfile-update disable
+set service dhcp-server static-arp disable
+set service dhcp-server use-dnsmasq disable

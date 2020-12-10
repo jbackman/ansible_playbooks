@@ -1,0 +1,23 @@
+---
+- name: Ensure envoy configuration dir exists
+  file:
+    dest: /etc/envoy
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+  become: "{{ become_user | default(true) }}"
+  tags:
+    - always
+
+- name: Add envoy configuration
+  template: 
+    src: envoy.j2
+    dest: /etc/envoy/config.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  become: "{{ become_user | default(true) }}"
+  notify: restart envoy
+  tags:
+    - always
