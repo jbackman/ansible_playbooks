@@ -1,7 +1,7 @@
 set firewall all-ping enable
 set firewall broadcast-ping disable
 set firewall group network-group internal network 10.5.0.0/16
-set firewall group network-group route_vpn network 10.5.76.21/32
+set firewall group address-group route_vpn network 10.5.76.21/32
 set firewall ipv6-receive-redirects disable
 set firewall ipv6-src-route disable
 set firewall ip-src-route disable
@@ -12,7 +12,7 @@ set firewall modify PBR rule 10 destination group network-group internal
 set firewall modify PBR rule 20 action modify
 set firewall modify PBR rule 20 description 'Route via OpenVPN'
 set firewall modify PBR rule 20 modify table 10
-set firewall modify PBR rule 20 source group network-group route_vpn
+set firewall modify PBR rule 20 source group address-group route_vpn
 set firewall modify PBR rule 30 action modify
 set firewall modify PBR rule 30 description 'Default Route'
 set firewall modify PBR rule 30 modify table 1
