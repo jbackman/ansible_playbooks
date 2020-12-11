@@ -1,7 +1,10 @@
+delete firewall
 set firewall all-ping enable
 set firewall broadcast-ping disable
+set firewall group address-group route_vpn address 10.5.76.21
+set firewall group address-group route_vpn description 'Hosts to route via a VPN'
 set firewall group network-group internal network 10.5.0.0/16
-set firewall group address-group route_vpn network 10.5.76.21/32
+set firewall group network-group internal network 10.6.71.0/24
 set firewall ipv6-receive-redirects disable
 set firewall ipv6-src-route disable
 set firewall ip-src-route disable
@@ -10,11 +13,10 @@ set firewall modify PBR rule 10 action accept
 set firewall modify PBR rule 10 description 'Internal Traffic'
 set firewall modify PBR rule 10 destination group network-group internal
 set firewall modify PBR rule 20 action modify
-set firewall modify PBR rule 20 description 'Route via OpenVPN'
+set firewall modify PBR rule 20 description 'NAS Reroute'
 set firewall modify PBR rule 20 modify table 10
 set firewall modify PBR rule 20 source group address-group route_vpn
 set firewall modify PBR rule 30 action modify
-set firewall modify PBR rule 30 description 'Default Route'
 set firewall modify PBR rule 30 modify table 1
 set firewall modify PBR rule 30 source group network-group internal
 set firewall receive-redirects disable
@@ -46,18 +48,23 @@ set interfaces wireguard wg0 peer PywkrieinL3PYIdyAvF9ASgF8ImUlwfsUbsDWPoj0Us= e
 set interfaces wireguard wg0 peer PywkrieinL3PYIdyAvF9ASgF8ImUlwfsUbsDWPoj0Us= persistent-keepalive 15
 set interfaces wireguard wg0 private-key /config/auth/wg2.key
 set interfaces wireguard wg0 route-allowed-ips false
+delete protocols
 set protocols bgp 65530 neighbor 10.5.69.7 remote-as 65531
 set protocols bgp 65530 neighbor 10.5.76.7 remote-as 65532
 set protocols static route 0.0.0.0/0 next-hop 10.5.68.3
+set protocols static route 10.5.75.0/27 next-hop 10.5.68.3
+set protocols static route 192.168.100.0/24 next-hop 10.5.68.3
 set protocols static table 1 route 0.0.0.0/0 next-hop 10.5.68.3
 set protocols static table 10 interface-route 0.0.0.0/0 next-hop-interface vtun0
 set protocols static table 11 interface-route 0.0.0.0/0 next-hop-interface wg0
+delete service gui
 set service gui http-port 80
 set service gui https-port 443
 set service gui older-ciphers disable
 set service mdns
-set service nat rule 5010 log disable
+delete service nat
 set service nat rule 5010 description 'Masquerade wg0'
+set service nat rule 5010 log disable
 set service nat rule 5010 outbound-interface wg0
 set service nat rule 5010 outside-address
 set service nat rule 5010 protocol all
