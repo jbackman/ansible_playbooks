@@ -1,0 +1,17 @@
+---
+
+- name: Template /etc/modules files
+  include_tasks: task_template_module.yml 
+  when: 
+    - kernel_modules is defined
+    - kernel_modules is iterable
+  tags:
+    - always
+
+- name: Template /root/authorized_keys file
+  include_tasks: task_template_authorized_keys.yml 
+  when: 
+    - authorized_keys is defined
+    - authorized_keys is iterable
+  tags:
+    - always

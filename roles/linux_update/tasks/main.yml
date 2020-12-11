@@ -1,0 +1,14 @@
+---
+- name: Set become
+  set_fact:
+    become_user: false
+  when:
+    - ansible_user == 'root'
+  tags:
+    - always
+
+- name: Include task to update packages
+  include_tasks: task_update.yml 
+  tags:
+    - always
+

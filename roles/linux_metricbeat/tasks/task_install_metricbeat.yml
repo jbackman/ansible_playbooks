@@ -1,0 +1,9 @@
+---
+- name: Install metricbeat
+  apt:
+    name: metricbeat
+    state: present
+    update_cache: yes
+  become: "{{ become_user | default(true) }}"
+  tags:
+    - always

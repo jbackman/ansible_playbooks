@@ -1,0 +1,27 @@
+---
+- name: Create Vwire with tags
+  panos_virtual_wire:
+    provider: '{{ panos_provider }}'
+    name: '{{ item.name }}'
+    interface1: '{{ item.interface1 }}'
+    interface2: '{{ item.interface2 }}'
+    tag: '{{ item.tag }}'
+    multicast: '{{ item.multicast | default("true") }}'
+    pass_through: '{{ item.pass_through | default("true") }}'
+  loop: "{{ virtual_wires }}"
+  when:
+    - item.tag is defined
+
+# Disabled as palo doesn't support ranges or multiples      
+#- name: Create Vwire without tags
+#  panos_virtual_wire:
+#    provider: '{{ panos_provider }}'
+#    name: '{{ item.name }}'
+#    interface1: '{{ item.interface1 }}'
+#    interface2: '{{ item.interface2 }}'
+#    multicast: '{{ item.multicast | default("true") }}'
+#    pass_through: '{{ item.pass_through | default("true") }}'
+#  loop: "{{ virtual_wires }}"
+#  when:
+#    - virtual_wires | length > 0
+#    - item.tag is not defined

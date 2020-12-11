@@ -1,0 +1,12 @@
+---
+- name: Update DNS
+  cloudflare_dns:
+    zone: "{{ item.zone }}"
+    record: "{{ item.record }}"
+    type: "{{ item.type }}"
+    value: "{{ item.value }}"
+    proxied: "{{ item.proxied | default('no') }}"
+    solo: "{{ item.solo | default('yes') }}"
+    account_email: "{{ cloudflare_email }}"
+    account_api_token: "{{ cloudflare_api_token }}"
+  loop: "{{ cloudflare_dns_records }}"

@@ -1,0 +1,20 @@
+---
+- name: Get external IP
+  include_tasks: get_external_ip.yml
+
+- name: Create home record
+  set_fact: 
+    external_record:
+      record: "{{ home_record }}"
+      type: "A"
+      zone: "{{ home_zone }}"
+      value: "{{ external_ip.json.ip }}"
+  ignore_errors: true
+  
+- name: Create home record
+  set_fact: 
+    cloudflare_dns_records: "{{ cloudflare_dns_records + [ external_record ] }}"
+  when: external_record is defined
+
+- name: Update Cloudflare 
+  include_tasks: update_dns.yml

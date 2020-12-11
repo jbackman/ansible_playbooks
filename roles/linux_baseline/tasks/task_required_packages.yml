@@ -1,0 +1,28 @@
+---
+
+- name: Install required packages
+  apt:
+    name: 
+      - "python3"
+      - "python3-pip"
+      - "python3-setuptools"
+      - "tcpdump"
+      - "vim"
+    state: latest
+  become: "{{ become_user | default(true) }}"
+
+- name: Install upgrade packages
+  apt:
+    name: 
+      - "ubuntu-release-upgrader-core"
+    state: latest
+  become: "{{ become_user | default(true) }}"
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Remove Apache
+  apt:
+    name:
+      - apache2
+    state: absent
+  become: "{{ become_user | default(true) }}"
+  when: "'apache' not in group_names"

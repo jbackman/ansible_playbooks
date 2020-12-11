@@ -1,0 +1,10 @@
+---
+- name: Get external IP
+  include_tasks: get_external_ip.yml
+  tags:
+    - always
+
+- name: Setup SNMPD
+  include_tasks: snmpd.yml
+  tags:
+    - always

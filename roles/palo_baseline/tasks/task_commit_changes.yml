@@ -1,0 +1,4 @@
+---
+- name: Commit changes
+  panos_commit:
+    provider: "{{ panos_provider}}"

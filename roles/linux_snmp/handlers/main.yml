@@ -1,0 +1,16 @@
+---
+- name: enable snmpd
+  service: 
+    name: snmpd 
+    enabled: yes
+  become: "{{ become_user | default(true) }}"
+  tags:
+    - always
+
+- name: restart snmpd
+  service: 
+    name: snmpd 
+    state: restarted
+  become: "{{ become_user | default(true) }}"
+  tags:
+    - always

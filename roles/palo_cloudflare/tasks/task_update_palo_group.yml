@@ -1,0 +1,39 @@
+---
+- name: Set tags
+  set_fact:
+    cloudflare_tags: 
+     - Cloudflare
+     - External
+     - Network
+    
+- name: Create cloudflare tags
+  panos_tag_object:
+    provider: '{{ palo_provider }}'
+    name: "{{ item }}"
+    color: 'red'
+    comments: "{{ item }}"
+    commit: no
+  loop: "{{ cloudflare_tags }}" 
+
+- name: Create cloudflare objects
+  panos_address_object:
+    provider: '{{ palo_provider }}'
+    name: 'network-{{ item | trim | replace("/","-")}}'
+    address_type: 'ip-netmask'
+    value: '{{ item | trim }}'
+    description: 'Cloudflare network {{ item | trim }}'
+    tag: "{{ cloudflare_tags }}"
+    commit: no
+  loop: "{{ cloudflare_hostname_list }}"
+  when: 
+    - item != ""
+    - item != "\r" 
+
+- name: Create cloudflare group
+  panos_address_group:
+    provider: '{{ palo_provider }}'
+    name: 'Group_Cloudflare'
+    dynamic_value: "'Cloudflare'"
+    tag: ['Cloudflare']
+    commit: no
+

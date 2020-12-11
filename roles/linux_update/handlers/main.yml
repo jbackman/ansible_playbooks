@@ -1,0 +1,6 @@
+---
+- name: reboot
+  reboot:
+  become: "{{ become_user | default(true) }}"
+  tags:
+    - always

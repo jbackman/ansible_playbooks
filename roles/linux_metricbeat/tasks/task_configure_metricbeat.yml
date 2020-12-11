@@ -1,0 +1,13 @@
+---
+
+- name: Add metricbeat configuration
+  template: 
+    src: metricbeat.j2
+    dest: /etc/metricbeat/metricbeat.yml
+    owner: root
+    group: root
+    mode: '0644'
+  become: "{{ become_user | default(true) }}"
+  notify: restart metricbeat
+  tags:
+    - always

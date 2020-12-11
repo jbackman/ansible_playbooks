@@ -1,0 +1,10 @@
+---
+- name: Set Dns and Ntp
+  panos_mgtconfig:
+    provider: '{{ panos_provider }}'
+    dns_server_primary: "{{ dns_server_primary }}"
+    dns_server_secondary: "{{ dns_server_secondary }}"
+    ntp_server_primary: "{{ ntp_server_primary }}"
+    timezone: "{{ timezone }}"
+    commit: no
+

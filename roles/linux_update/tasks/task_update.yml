@@ -1,0 +1,12 @@
+---
+
+- name: Update 
+  apt:
+    name: "*"
+    state: latest
+    update_cache: yes
+  become: "{{ become_user | default(true) }}"
+  tags:
+    - always
+
+

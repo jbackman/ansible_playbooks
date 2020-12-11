@@ -1,0 +1,9 @@
+---
+
+- hosts: docker
+  gather_facts: True
+  vars_files:
+    - ~/ansible_data/vars/docker.yml
+
+  roles:
+    - role: linux_docker

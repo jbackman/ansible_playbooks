@@ -1,0 +1,21 @@
+---
+- name: Set Zones without profile
+  panos_zone:
+    provider: '{{ panos_provider }}'
+    zone: '{{ item.zone | default("Unused") }}'
+    mode: '{{ item.mode | default("layer3") }}'
+    interface: '{{ item.interface }}'
+  loop: "{{ zones }}"
+  when:
+    - item.zone_profile is not defined
+
+- name: Set Zones with profile
+  panos_zone:
+    provider: '{{ panos_provider }}'
+    zone: '{{ item.zone | default("Unused") }}'
+    mode: '{{ item.mode | default("layer3") }}'
+    interface: '{{ item.interface }}'
+    zone_profile: '{{ item.zone_profile | default(None)}}'
+  loop: "{{ zones }}"
+  when:
+    - item.zone_profile is defined

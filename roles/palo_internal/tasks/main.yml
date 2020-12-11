@@ -1,0 +1,10 @@
+---
+
+- name: Update provide to include IP
+  set_fact:
+    palo_provider:
+      ip_address: "{{ ip_address }}"
+      api_key: "{{ palo_api_key }}"
+
+- name: Include task to update palo group
+  include_tasks: task_update_palo_group.yml

@@ -1,0 +1,11 @@
+---
+- name: Get the IP list from Uptime Robot
+  uri:
+    url: https://uptimerobot.com/inc/files/ips/hostnames.txt
+    return_content: yes
+  register: uptime_hostnames
+
+- name: Set clean uptimerobot hostnames
+  set_fact: 
+    uptime_hostname_list: "{{ uptime_hostnames.content.split('\n') }}"  
+    
