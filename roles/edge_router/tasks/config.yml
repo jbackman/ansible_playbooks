@@ -1,7 +1,7 @@
 - name: Generate configuration file.
-    template:
-      src: er_config.j2
-      dest: /tmp/er_config.txt
+  template:
+    src: er_config.j2
+    dest: /tmp/er_config.txt
   delegate_to: 127.0.0.1
 
 - name: Get encrypted files
@@ -24,7 +24,7 @@
 
 - name: Set fact filenames
   set_fact:
-    file_names: "{{ lookup('pipe', 'ls roles/edge_router/files/auth/*').split('\n') }}"
+    #file_names: "{{ lookup('pipe', 'ls roles/edge_router/files/auth/*').split('\n') }}"
     decrypted_file_names: "{{ lookup('pipe', 'ls /tmp/encrypted/*').split('\n') }}"
   delegate_to: 127.0.0.1
 
@@ -33,7 +33,8 @@
     src: "{{ item }}"
     protocol: scp
     dest: "/config/auth/{{ item | basename }}"
-  loop: "{{ file_names + decrypted_file_names }}"
+  loop: "{{ decrypted_file_names }}"
+  #loop: "{{ file_names + decrypted_file_names }}"
 
 - name: Delete directory for encrypted files
   file:
@@ -45,10 +46,12 @@
   edgeos_config:
     backup: yes
     src: /tmp/er_config.txt
+    save: yes
+    backup_options:
+      dir_path: ~/
 
 - name: Delete config file.
-  local_action:
-    file:
-      path: /tmp/er_config.txt
-      state: absent
+  file:
+    path: /tmp/er_config.txt
+    state: absent
   delegate_to: 127.0.0.1
