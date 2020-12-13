@@ -1,0 +1,27 @@
+---
+
+- hosts: fortigate
+  connection: httpapi
+
+  vars_files:
+    - ~/ansible_data/credentials.yml
+    - ~/ansible_data/vars/internal.yml
+    - ~/ansible_data/vars/external.yml
+  vars:
+    ansible_httpapi_use_ssl: yes
+    ansible_httpapi_validate_certs: no
+    ansible_httpapi_port: 443
+
+  collections:
+    - fortinet.fortios
+
+  roles:
+    - role: fortigate_uptime_robot 
+      tags: 
+        - uptime_robot 
+    - role: fortigate_cloudflare
+      tags: 
+        - cloudflare
+    - role: fortigate_internal
+      tags: 
+        - internal

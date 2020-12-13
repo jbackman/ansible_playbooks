@@ -1,0 +1,4 @@
+---
+
+- name: Include task to update fortigate group
+  include_tasks: task_update_fortigate_group.yml

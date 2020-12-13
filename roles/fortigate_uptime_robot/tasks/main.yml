@@ -1,0 +1,7 @@
+---
+
+- name: Include task to get Uptime Robot hostnames
+  include_tasks: task_get_uptime_robot_hosts.yml 
+
+- name: Include task to update fortinet group
+  include_tasks: task_update_fortinet_group.yml
