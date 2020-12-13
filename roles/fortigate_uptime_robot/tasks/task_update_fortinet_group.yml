@@ -1,0 +1,35 @@
+---
+- name: Set fact
+  set_fact:
+    vdom: L3-Perm
+
+- name: Create uptime robot objects
+  fortios_firewall_address:
+    vdom: '{{ vdom }}'
+    state: present
+    firewall_address:
+      name: 'fqdn-{{ item | trim | replace("/","-")}}'
+      type: 'fqdn'
+      fqdn: '{{ item | trim }}'
+      comment: 'Uptime Robot network {{ item | trim }}'
+  loop: "{{ uptime_hostname_list }}"
+  when: 
+    - item != ""
+    - item != "\r" 
+
+- name: Set fact uptime robot group
+  set_fact:
+    ur_group: "{{ ur_group|default([]) + [ {'name': 'fqdn-'+item|trim|replace('/','-')} ] }}"
+  loop: "{{ uptime_hostname_list }}"
+  when: 
+    - item != ""
+    - item != "\r" 
+
+- name: Create uptime robot group
+  fortios_firewall_addrgrp:
+    vdom: '{{ vdom }}'
+    state: present
+    firewall_addrgrp:
+      name: 'group-Uptime-robot'
+      member: "{{ ur-group }}"
+      comment: 'Uptime Robot hosts' 

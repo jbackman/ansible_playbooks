@@ -1,0 +1,60 @@
+---
+
+- name: Set fact vdom
+  set_fact:
+    vdom: L3-Perm
+
+- name: Create external FQDN objects
+  fortios_firewall_address:
+    vdom: '{{ vdom }}'
+    firewall_address:
+      name: 'fqdn-{{ item.name }}'
+      type: 'fqdn'
+      fqdn: '{{item.value}}'
+      comment: '{{item.desc}}'
+  loop: '{{ external_fqdn }}'
+
+- name: Create external Network objects
+  fortios_firewall_address:
+    vdom: '{{ vdom }}'
+    firewall_address:
+      name: 'network-{{ item.name }}'
+      type: 'ipmask'
+      subnet: '{{item.value}}'
+      comment: '{{item.desc}}'
+  loop: '{{ external_networks + internal_networks }}'
+
+- name: Create external Host objects
+  fortios_firewall_address:
+    vdom: '{{ vdom }}'
+    firewall_address:
+      name: 'host-{{ item.name }}'
+      type: 'ipmask'
+      subnet: '{{item.value}}'
+      comment: '{{item.desc}}'
+  loop: '{{ external_hosts + internal_hosts }}'
+
+- name: Set fact vdom
+  set_fact:
+    vdom: L1-IoT
+
+- name: Create internal host objects
+  fortios_firewall_address:
+    vdom: '{{ vdom }}'
+    firewall_address:
+      name: 'host-{{ item.name }}'
+      type: 'ipmask'
+      subnet: '{{item.value}}'
+      comment: '{{item.desc}}'
+  loop: '{{ internal_hosts }}'
+
+- name: Create internal network objects
+  fortios_firewall_address:
+    vdom: '{{ vdom }}'
+    firewall_address:
+      name: 'network-{{ item.name }}'
+      type: 'ipmask'
+      subnet: '{{item.value}}'
+      comment: '{{item.desc}}'
+  loop: '{{ internal_networks }}'
+

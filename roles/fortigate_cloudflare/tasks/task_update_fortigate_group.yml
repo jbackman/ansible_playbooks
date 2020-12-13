@@ -1,0 +1,35 @@
+---
+- name: Set fact
+  set_fact:
+    vdom: L3-Perm
+
+- name: Create cloudflare objects
+  fortios_firewall_address:
+    vdom: '{{ vdom }}'
+    state: present
+    firewall_address:
+      name: 'network-{{ item | trim | replace("/","-")}}'
+      type: 'ipmask'
+      subnet: '{{ item | trim }}'
+      comment: 'Cloudflare network {{ item | trim }}'
+  loop: "{{ cloudflare_hostname_list }}"
+  when: 
+    - item != ""
+    - item != "\r" 
+
+- name: Set fact cloudflare group
+  set_fact:
+    cf_group: "{{ cf_network|default([]) + [ {'name': 'network-'+item|trim|replace('/','-')} ] }}"
+  loop: "{{ cloudflare_hostname_list }}"
+  when: 
+    - item != ""
+    - item != "\r" 
+
+- name: Create cloudflare group
+  fortios_firewall_addrgrp:
+    vdom: '{{ vdom }}'
+    state: present
+    firewall_addrgrp:
+      name: 'group-cloudflare-networks'
+      member: "{{ cf_group }}"
+      comment: 'Cloudflare networks' 

@@ -1,0 +1,11 @@
+---
+- name: Get the IP list from Cloudflare
+  uri:
+    url: https://www.cloudflare.com/ips-v4
+    return_content: yes
+  register: cloudflare_hostnames
+
+- name: Set clean cloudflare hostnames
+  set_fact: 
+    cloudflare_hostname_list: "{{ cloudflare_hostnames.content.split('\n') }}"  
+    
