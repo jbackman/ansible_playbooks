@@ -16,12 +16,12 @@
     - fortinet.fortios
 
   roles:
-          #- role: fortigate_uptime_robot 
-          #tags: 
-          #- uptime_robot 
+    - role: fortigate_uptime_robot 
+      tags: 
+        - uptime_robot 
     - role: fortigate_cloudflare
       tags: 
         - cloudflare
-          #- role: fortigate_internal
-          #tags: 
-          #- internal
+    - role: fortigate_internal
+      tags: 
+        - internal
