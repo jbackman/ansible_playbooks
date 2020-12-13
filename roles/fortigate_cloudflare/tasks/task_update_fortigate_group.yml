@@ -19,7 +19,7 @@
 
 - name: Set fact cloudflare group
   set_fact:
-    cf_group: "{{ cf_network|default([]) + [ {'name': 'network-'+item|trim|replace('/','-')} ] }}"
+    cf_group: "{{ cf_group|default([]) + [ {'name': 'network-'+item|trim|replace('/','-')} ] }}"
   loop: "{{ cloudflare_hostname_list }}"
   when: 
     - item != ""
