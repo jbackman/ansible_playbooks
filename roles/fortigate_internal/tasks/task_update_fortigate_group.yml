@@ -15,7 +15,7 @@
       comment: '{{item.desc}}'
   loop: '{{ external_fqdn }}'
 
-- name: Create external Network objects
+- name: Create external network objects
   fortios_firewall_address:
     vdom: '{{ vdom }}'
     state: present
@@ -26,15 +26,14 @@
       comment: '{{item.desc}}'
   loop: '{{ external_networks + internal_networks }}'
 
-- name: Create external Host objects
+- name: Create external host objects
   fortios_firewall_address:
     vdom: '{{ vdom }}'
     state: present
     firewall_address:
       name: 'host-{{ item.name }}'
-      type: 'iprange'
-      start_ip: '{{item.value}}'
-      end_ip: '{{item.value}}'
+      type: 'ipmask'
+      subnet: '{{item.value}}/32'
       comment: '{{item.desc}}'
   loop: '{{ external_hosts + internal_hosts }}'
 
@@ -48,9 +47,8 @@
     state: present
     firewall_address:
       name: 'host-{{ item.name }}'
-      type: 'iprange'
-      start_ip: '{{item.value}}'
-      end_ip: '{{item.value}}'
+      type: 'ipmask'
+      subnet: '{{item.value}}/32'
       comment: '{{item.desc}}'
   loop: '{{ internal_hosts }}'
 
