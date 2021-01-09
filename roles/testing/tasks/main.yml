@@ -1,4 +1,0 @@
----
-- debug:
-    msg: "{{ item }}"
-  loop: internal_hosts
