@@ -11,17 +11,20 @@
   - certs
   - csrs
   - keys
+  delegate_to: 127.0.0.1
 
 - name: Check that the account key exists
   stat:
     path: "{{ letsencrypt_account_key }}"
     backup: yes
+  delegate_to: 127.0.0.1
   register: stat_result
 
 - name: Generate an OpenSSL account key with the default values (4096 bits, RSA)
   openssl_privatekey:
     path: "{{ letsencrypt_account_key }}"
     backup: yes
+  delegate_to: 127.0.0.1
   when: not stat_result.stat.exists
 
 - name: Make sure account exists and has given contacts. We agree to TOS.
@@ -33,15 +36,18 @@
     acme_version: 2
     contact:
     - "mailto: {{ acme_email }}"
+  delegate_to: 127.0.0.1
 
 - name: Check that the private key exists
   stat:
     path: "{{ letsencrypt_keys }}/{{ domain_name }}.key"
+  delegate_to: 127.0.0.1
   register: pk_result
 
 - name: Generate an OpenSSL private key with the default values (4096 bits, RSA)
   openssl_privatekey:
     path: "{{ letsencrypt_keys }}/{{ domain_name }}.key"
+  delegate_to: 127.0.0.1
   when: not stat_result.stat.exists
 
 - name: Generate an OpenSSL Certificate Signing Request
@@ -55,6 +61,7 @@
     state_or_province_name: "{{ pki_state_name }}"
     locality_name: "{{ pki_locality }}"
     email_address: "{{ acme_email }}"
+  delegate_to: 127.0.0.1
 
 - name: Create a challenge for using a account key file.
   acme_certificate:
@@ -65,6 +72,7 @@
     challenge: "{{ acme_challenge_type }}"
     acme_directory: "{{ acme_directory }}"
     remaining_days: "{{ letsencrypt_remaining_days }}"
+  delegate_to: 127.0.0.1
   register: challenge
 
 - name: Update DNS
@@ -91,4 +99,5 @@
     acme_directory: "{{ acme_directory }}"
     remaining_days: "{{ letsencrypt_remaining_days }}"
     data: "{{ challenge }}"
+  delegate_to: 127.0.0.1
   when: challenge is changed
