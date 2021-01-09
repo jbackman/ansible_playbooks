@@ -1,0 +1,94 @@
+---
+- name: "Create required directories in {{ letsencrypt_dir }}"
+  file:
+    path: "{{ letsencrypt_dir }}/{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: u=rwx,g=x,o=x
+  with_items:
+  - account
+  - certs
+  - csrs
+  - keys
+
+- name: Check that the account key exists
+  stat:
+    path: "{{ letsencrypt_account_key }}"
+    backup: yes
+  register: stat_result
+
+- name: Generate an OpenSSL account key with the default values (4096 bits, RSA)
+  openssl_privatekey:
+    path: "{{ letsencrypt_account_key }}"
+    backup: yes
+  when: not stat_result.stat.exists
+
+- name: Make sure account exists and has given contacts. We agree to TOS.
+  acme_account:
+    account_key_src: "{{ letsencrypt_account_key }}"
+    state: present
+    terms_agreed: yes
+    acme_directory: "{{ acme_directory }}"
+    acme_version: 2
+    contact:
+    - "mailto: {{ acme_email }}"
+
+- name: Check that the private key exists
+  stat:
+    path: "{{ letsencrypt_keys }}/{{ domain_name }}.key"
+  register: pk_result
+
+- name: Generate an OpenSSL private key with the default values (4096 bits, RSA)
+  openssl_privatekey:
+    path: "{{ letsencrypt_keys }}/{{ domain_name }}.key"
+  when: not stat_result.stat.exists
+
+- name: Generate an OpenSSL Certificate Signing Request
+  openssl_csr:
+    path: "{{ letsencrypt_csrs }}/{{ domain_name }}.csr"
+    privatekey_path: "{{ letsencrypt_keys }}/{{ domain_name }}.key"
+    common_name: "{{ domain_name }}"
+    subject_alt_name: "{{ domain_sans }}"
+    backup: yes
+    country_name: "{{ pki_country_name }}"
+    state_or_province_name: "{{ pki_state_name }}"
+    locality_name: "{{ pki_locality }}"
+    email_address: "{{ acme_email }}"
+
+- name: Create a challenge for using a account key file.
+  acme_certificate:
+    account_key_src: "{{ lets_encrypt_account_key }}"
+    account_email: "{{ acme_email }}"
+    src: "{{ letsencrypt_csrs }}/{{ domain_name}}.csr"
+    cert: "{{ letsencrypt_certs }}/{{ domain_name}}.crt"
+    challenge: "{{ acme_challenge_type }}"
+    acme_directory: "{{ acme_directory }}"
+    remaining_days: "{{ letsencrypt_remaining_days }}"
+  register: challenge
+
+- name: Update DNS
+  cloudflare_dns:
+    zone: "{{ home_zone }}"
+    record: "{{ challenge.challenge_data[domain_name]['dns-01'].record }}"
+    type: TXT
+    value: "{{ challenge.challenge_data[domain_name]['dns-01'].resource_value | regex_replace('^(.*)$', '\"\\1\"') }}"
+    proxied: no
+    solo: yes
+    account_email: "{{ cloudflare_email }}"
+    account_api_token: "{{ cloudflare_api_token }}"
+  when: challenge is changed and domain_name in challenge.challenge_data
+
+- name: Let the challenge be validated and retrieve the cert and intermediate certificate
+  acme_certificate:
+    account_key_src: "{{ lets_encrypt_account_key }}"
+    account_email: "{{ acme_email }}"
+    src: "{{ letsencrypt_csrs }}/{{ domain_name }}.csr"
+    cert: "{{ letsencrypt_certs }}/{{ domain_name }}.crt"
+    fullchain: "{{ letsencrypt_certs }}/{{ domain_name }}-fullchain.crt }}"
+    chain: "{{ letsencrypt_certs }}/{{ domain_name }}-intermediate.crt }}"
+    challenge: "{{ acme_challenge_type }}"
+    acme_directory: "{{ acme_directory }}"
+    remaining_days: "{{ letsencrypt_remaining_days }}"
+    data: "{{ challenge }}"
+  when: challenge is changed

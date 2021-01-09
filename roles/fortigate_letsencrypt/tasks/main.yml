@@ -1,0 +1,6 @@
+---
+- name: Update letsencrypt certificte
+  include_tasks: update_letsencrypt.yml
+
+- name: Update Fortigate 
+  include_tasks: update_fortigate_cert.yml
