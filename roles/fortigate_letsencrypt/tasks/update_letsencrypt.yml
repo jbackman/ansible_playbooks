@@ -39,21 +39,21 @@
 
 - name: Check that the private key exists
   stat:
-    path: "{{ letsencrypt_keys }}/{{ domain_name }}.key"
+    path: "{{ letsencrypt_keys_dir }}/{{ domain_name }}.key"
   delegate_to: 127.0.0.1
   register: pk_result
 
 - name: Generate an OpenSSL private key with the default values (4096 bits, RSA)
   openssl_privatekey:
-    path: "{{ letsencrypt_keys }}/{{ domain_name }}.key"
+    path: "{{ letsencrypt_keys_dir }}/{{ domain_name }}.key"
     backup: yes
   delegate_to: 127.0.0.1
   when: not pk_result.stat.exists
 
 - name: Generate an OpenSSL Certificate Signing Request
   openssl_csr:
-    path: "{{ letsencrypt_csrs }}/{{ domain_name }}.csr"
-    privatekey_path: "{{ letsencrypt_keys }}/{{ domain_name }}.key"
+    path: "{{ letsencrypt_csrs_dir }}/{{ domain_name }}.csr"
+    privatekey_path: "{{ letsencrypt_keys_dir }}/{{ domain_name }}.key"
     common_name: "{{ domain_name }}"
     subject_alt_name: "{{ domain_sans }}"
     backup: yes
@@ -67,8 +67,8 @@
   acme_certificate:
     account_key_src: "{{ lets_encrypt_account_key }}"
     account_email: "{{ acme_email }}"
-    src: "{{ letsencrypt_csrs }}/{{ domain_name}}.csr"
-    cert: "{{ letsencrypt_certs }}/{{ domain_name}}.crt"
+    src: "{{ letsencrypt_csrs_dir }}/{{ domain_name}}.csr"
+    cert: "{{ letsencrypt_certs_dir }}/{{ domain_name}}.crt"
     challenge: "{{ acme_challenge_type }}"
     acme_directory: "{{ acme_directory }}"
     remaining_days: "{{ letsencrypt_remaining_days }}"
@@ -91,10 +91,10 @@
   acme_certificate:
     account_key_src: "{{ lets_encrypt_account_key }}"
     account_email: "{{ acme_email }}"
-    src: "{{ letsencrypt_csrs }}/{{ domain_name }}.csr"
-    cert: "{{ letsencrypt_certs }}/{{ domain_name }}.crt"
-    fullchain: "{{ letsencrypt_certs }}/{{ domain_name }}-fullchain.crt }}"
-    chain: "{{ letsencrypt_certs }}/{{ domain_name }}-intermediate.crt }}"
+    src: "{{ letsencrypt_csrs_dir }}/{{ domain_name }}.csr"
+    cert: "{{ letsencrypt_certs_dir }}/{{ domain_name }}.crt"
+    fullchain: "{{ letsencrypt_certs_dir }}/{{ domain_name }}-fullchain.crt }}"
+    chain: "{{ letsencrypt_certs_dir }}/{{ domain_name }}-intermediate.crt }}"
     challenge: "{{ acme_challenge_type }}"
     acme_directory: "{{ acme_directory }}"
     remaining_days: "{{ letsencrypt_remaining_days }}"
