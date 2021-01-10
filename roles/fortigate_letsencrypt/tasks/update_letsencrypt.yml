@@ -65,7 +65,7 @@
 
 - name: Create a challenge for using a account key file.
   acme_certificate:
-    account_key_src: "{{ lets_encrypt_account_key }}"
+    account_key_src: "{{ letsencrypt_account_key }}"
     account_email: "{{ acme_email }}"
     src: "{{ letsencrypt_csrs_dir }}/{{ domain_name}}.csr"
     cert: "{{ letsencrypt_certs_dir }}/{{ domain_name}}.crt"
@@ -89,7 +89,7 @@
 
 - name: Let the challenge be validated and retrieve the cert and intermediate certificate
   acme_certificate:
-    account_key_src: "{{ lets_encrypt_account_key }}"
+    account_key_src: "{{ letsencrypt_account_key }}"
     account_email: "{{ acme_email }}"
     src: "{{ letsencrypt_csrs_dir }}/{{ domain_name }}.csr"
     cert: "{{ letsencrypt_certs_dir }}/{{ domain_name }}.crt"
