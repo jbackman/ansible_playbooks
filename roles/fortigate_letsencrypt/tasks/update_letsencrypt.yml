@@ -86,7 +86,7 @@
     solo: yes
     account_email: "{{ cloudflare_email }}"
     account_api_token: "{{ cloudflare_api_token }}"
-  loop: domain_san
+  loop: "{{ domain_san }}"
   when: challenge is changed and item in challenge.challenge_data
 
 - name: Pause 3 min (ensure the TTL expires)
