@@ -55,7 +55,7 @@
     path: "{{ letsencrypt_csrs_dir }}/{{ domain_name }}.csr"
     privatekey_path: "{{ letsencrypt_keys_dir }}/{{ domain_name }}.key"
     common_name: "{{ domain_name }}"
-    subject_alt_name: "{{ ['DNS:' | product(domain_sans) | map('join', '.') | join(',') }}"
+    subject_alt_name: "{{ ['DNS:'] | product(domain_sans) | map('join', '.') | join(',') }}"
     backup: yes
     country_name: "{{ pki_country_name }}"
     state_or_province_name: "{{ pki_state_name }}"
