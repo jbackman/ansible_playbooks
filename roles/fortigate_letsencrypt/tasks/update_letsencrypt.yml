@@ -16,7 +16,6 @@
 - name: Check that the account key exists
   stat:
     path: "{{ letsencrypt_account_key }}"
-    backup: yes
   delegate_to: 127.0.0.1
   register: stat_result
 
@@ -47,8 +46,9 @@
 - name: Generate an OpenSSL private key with the default values (4096 bits, RSA)
   openssl_privatekey:
     path: "{{ letsencrypt_keys }}/{{ domain_name }}.key"
+    backup: yes
   delegate_to: 127.0.0.1
-  when: not stat_result.stat.exists
+  when: not pk_result.stat.exists
 
 - name: Generate an OpenSSL Certificate Signing Request
   openssl_csr:
