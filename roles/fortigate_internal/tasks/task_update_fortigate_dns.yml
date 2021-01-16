@@ -1,0 +1,43 @@
+---
+
+- name: Set fact vdom
+  set_fact:
+    vdom: L3-Perm
+  tags:
+    - dns
+
+- name: Create DNS entries fact
+  template:
+    src: 'dns.j2'
+    dest: /tmp/dns.yaml
+  tags:
+    - dns
+  delegate_to: localhost
+
+- name: Include DNS variable
+  include_vars:
+    file: /tmp/dns.yaml
+    name: dns
+  tags:
+    - dns
+
+- name: Create external FQDN objects
+  fortios_system_dns_database:
+    vdom: '{{ vdom }}'
+    state: present
+    system_dns_database:
+      name: '{{ item.name }}'
+      domain: "{{ item.domain }}"
+      primary_name: 'dns'
+      status: 'enable'
+      type: 'master'
+      view: 'shadow'
+      dns_entry: "{{ item.entries }}"
+  loop: "{{dns.dns_entries}}"
+  tags:
+    - dns
+
+- name: Clean up
+  file:
+    state: absent
+    name: /tmp/dns.yaml

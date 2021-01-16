@@ -2,3 +2,9 @@
 
 - name: Include task to update fortigate group
   include_tasks: task_update_fortigate_group.yml
+  tags:
+    - ip
+- name: Include task to update fortigate DNS
+  include_tasks: task_update_fortigate_dns.yml
+  tags:
+    - dns

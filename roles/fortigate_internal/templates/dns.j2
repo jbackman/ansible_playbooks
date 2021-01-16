@@ -1,0 +1,86 @@
+---
+dns_entries: 
+  -
+    name: home_local
+    domain: home.local
+    entries: 
+{% for host in internal_hosts %}
+      - hostname: "{{ host.name.split(".")[0] | lower }}"
+        id: "{{ loop.index }}"
+        ip: "{{ host.value.split("/")[0] }}"
+        status: "enable"
+        type: "A"
+        ttl: "120"
+{% endfor %}
+  -
+    name: 10.5.10.in-addr.arpa 
+    domain: 10.5.10.in-addr.arpa 
+    entries:
+{% for host in internal_hosts_anycast %}
+      - hostname: "{{ host.name | lower }}."
+        id: "{{ loop.index }}"
+        ip: "{{ host.value.split("/")[0] }}"
+        status: "enable"
+        type: "PTR"
+        ttl: "120"
+{% endfor %}
+  -
+    name: 68.5.10.in-addr.arpa 
+    domain: 68.5.10.in-addr.arpa 
+    entries:
+{% for host in internal_hosts_vlan68 %}
+      - hostname: "{{ host.name | lower }}."
+        id: "{{ loop.index }}"
+        ip: "{{ host.value.split("/")[0] }}"
+        status: "enable"
+        type: "PTR"
+        ttl: "120"
+{% endfor %}
+  -
+    name: 69.5.10.in-addr.arpa 
+    domain: 69.5.10.in-addr.arpa 
+    entries:
+{% for host in internal_hosts_vlan69 %}
+      - hostname: "{{ host.name | lower }}."
+        id: "{{ loop.index }}"
+        ip: "{{ host.value.split("/")[0] }}"
+        status: "enable"
+        type: "PTR"
+        ttl: "120"
+{% endfor %}
+  -
+    name: 70.5.10.in-addr.arpa 
+    domain: 70.5.10.in-addr.arpa 
+    entries:
+{% for host in internal_hosts_vlan70 %}
+      - hostname: "{{ host.name | lower }}."
+        id: "{{ loop.index }}"
+        ip: "{{ host.value.split("/")[0] }}"
+        status: "enable"
+        ttl: "120"
+        type: "PTR"
+{% endfor %}
+  -
+    name: 75.5.10.in-addr.arpa 
+    domain: 75.5.10.in-addr.arpa 
+    entries:
+{% for host in internal_hosts_vlan75 %}
+      - hostname: "{{ host.name | lower }}."
+        id: "{{ loop.index }}"
+        ip: "{{ host.value.split("/")[0] }}"
+        status: "enable"
+        type: "PTR"
+        ttl: "120"
+{% endfor %}
+  -
+    name: 76.5.10.in-addr.arpa 
+    domain: 76.5.10.in-addr.arpa 
+    entries:
+{% for host in internal_hosts_vlan76 %}
+      - hostname: "{{ host.name | lower }}."
+        id: "{{ loop.index }}"
+        ip: "{{ host.value.split("/")[0] }}"
+        status: "enable"
+        type: "PTR"
+        ttl: "120"
+{% endfor %}
