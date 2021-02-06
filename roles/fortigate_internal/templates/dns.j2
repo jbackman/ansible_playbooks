@@ -3,14 +3,23 @@ dns_entries:
   -
     name: home_local
     domain: home.local
-    entries: 
-{% for host in internal_hosts %}
+    entries:
+{% set ns = namespace(last_loop=0) %}{% for host in internal_hosts %}
       - hostname: "{{ host.name.split(".")[0] | lower }}"
         id: "{{ loop.index }}"
         ip: "{{ host.value.split("/")[0] }}"
         status: "enable"
         type: "A"
         ttl: "120"
+{% set ns.last_loop = loop.index %}
+{% endfor %}
+{% for host in internal_cnames %}
+      - canonical-name: "{{ host.value | lower}}"
+        hostname: "{{ host.name | lower }}"
+        id: "{{ ns.last_loop + loop.index }}"
+        status: "enable"
+        type: "CNAME"
+        ttl: "1200"
 {% endfor %}
   -
     name: 10.5.10.in-addr.arpa 

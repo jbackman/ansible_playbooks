@@ -1,0 +1,42 @@
+---
+
+- hosts: fortigate
+  connection: httpapi
+
+  vars_files:
+    - ~/ansible_data/credentials.yml
+    - ~/ansible_data/vars/internal.yml
+    - ~/ansible_data/vars/external.yml
+  vars:
+    ansible_httpapi_use_ssl: yes
+    ansible_httpapi_validate_certs: no
+    ansible_httpapi_port: 443
+
+  collections:
+    - fortinet.fortios
+
+  tasks:
+    - name: Create external FQDN objects
+      fortios_system_dns_database:
+        vdom: 'L3-Perm'
+        state: present
+        system_dns_database:
+          name: 'home_local'
+          domain: "home.local"
+          primary_name: 'dns'
+          status: 'enable'
+          type: 'master'
+          view: 'shadow'
+          dns_entry:
+            - hostname: "test2"
+              id: "1"
+              ip: "192.168.1.1"
+              status: "enable"
+              type: "A"
+              ttl: "120"
+            - canonical_name: "test2.home.local"
+              hostname: "test3"
+              id: "2"
+              status: "enable"
+              type: "CNAME"
+              ttl: "1200"

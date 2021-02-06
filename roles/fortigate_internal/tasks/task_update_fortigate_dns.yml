@@ -12,6 +12,7 @@
     dest: /tmp/dns.yaml
   tags:
     - dns
+    - generate
   delegate_to: localhost
 
 - name: Include DNS variable
