@@ -1,9 +1,8 @@
 ---
 
 - hosts: edgeos
-  gather_facts: True
   vars_files:
+    - ~/ansible_data/credentials.yml
     - ~/ansible_data/vars/internal.yml
-    - ~/ansible_data/vars/external.yml
   roles:
     - role: edge_router

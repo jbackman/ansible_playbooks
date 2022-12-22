@@ -1,7 +1,7 @@
 ---
 
-- name: Configure System
-  include_tasks: config.yml
+#- name: Configure System
+#  include_tasks: config.yml
 
 - name: Configure DHCP static reservations
   include_tasks: dhcp_static.yml

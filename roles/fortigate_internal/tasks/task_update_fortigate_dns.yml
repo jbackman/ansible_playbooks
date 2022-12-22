@@ -38,7 +38,7 @@
   tags:
     - dns
 
-- name: Clean up
-  file:
-    state: absent
-    name: /tmp/dns.yaml
+ #- name: Clean up
+ # file:
+ #   state: absent
+ #   name: /tmp/dns.yaml

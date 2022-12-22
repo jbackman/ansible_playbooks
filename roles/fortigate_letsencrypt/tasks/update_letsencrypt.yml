@@ -3,8 +3,6 @@
   file:
     path: "{{ letsencrypt_dir }}/{{ item }}"
     state: directory
-    owner: root
-    group: root
     mode: u=rwx,g=x,o=x
   with_items:
   - account

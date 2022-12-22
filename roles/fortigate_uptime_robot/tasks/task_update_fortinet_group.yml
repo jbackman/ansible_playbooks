@@ -5,13 +5,14 @@
 
 - name: Create uptime robot objects
   fortios_firewall_address:
-    vdom: '{{ vdom }}'
-    state: present
+    vdom: "{{ vdom }}"
+    state: "present"
+    enable_log: true
     firewall_address:
-      name: 'fqdn-{{ item | trim | replace("/","-")}}'
-      type: 'fqdn'
-      fqdn: '{{ item | trim }}'
-      comment: 'Uptime Robot network {{ item | trim }}'
+      name: "fqdn-{{ item | trim | replace('/','-')}}"
+      type: "fqdn"
+      fqdn: "{{ item | trim }}"
+      comment: "Uptime Robot network {{ item | trim }}"
   loop: "{{ uptime_hostname_list }}"
   when: 
     - item != ""

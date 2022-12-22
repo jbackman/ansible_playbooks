@@ -14,24 +14,12 @@ dns_entries:
 {% set ns.last_loop = loop.index %}
 {% endfor %}
 {% for host in internal_cnames %}
-      - canonical-name: "{{ host.value | lower}}"
+      - canonical_name: "{{ host.value | lower}}"
         hostname: "{{ host.name | lower }}"
         id: "{{ ns.last_loop + loop.index }}"
         status: "enable"
         type: "CNAME"
         ttl: "1200"
-{% endfor %}
-  -
-    name: 10.5.10.in-addr.arpa 
-    domain: 10.5.10.in-addr.arpa 
-    entries:
-{% for host in internal_hosts_anycast %}
-      - hostname: "{{ host.name | lower }}."
-        id: "{{ loop.index }}"
-        ip: "{{ host.value.split("/")[0] }}"
-        status: "enable"
-        type: "PTR"
-        ttl: "120"
 {% endfor %}
   -
     name: 68.5.10.in-addr.arpa 
