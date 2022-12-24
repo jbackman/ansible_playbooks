@@ -7,7 +7,7 @@
 - name: Configure Bridge Ports
   routeros_command:
     commands:
-      - "/interface bridge port add bridge={{item.0.get('name') }} comment=\"{{item.0.get('comment','defconf') }}\" interface={{item.1}}"
+      - "/interface bridge port add bridge={{item.0.get('name') }} comment=\"{{item.0.get('comment','defconf') }}\" interface={{item.1}} hw={{item.0.get('hw','no')}}"
   with_subelements:
     - "{{ interface.get('bridge',{}).get('port',[]) }}"
     - interfaces
