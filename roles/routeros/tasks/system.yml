@@ -1,0 +1,31 @@
+- name: Configure Hostname
+  routeros_command:
+    commands:
+      - "/system identity set name={{ inventory_hostname }}"
+
+- name: Update login banner
+  routeros_command:
+    commands:
+      - /system note set show-at-login=yes
+      - >
+        /system note set note="\
+        \n      ----------------------------------------\
+        \n      |\
+        \n      | Authorized Access Only\
+        \n      |\
+        \n      ----------------------------------------\
+        \n      |\
+        \n      | You are logged into {{ inventory_hostname }}\
+        \n      |\
+        \n      ----------------------------------------"
+
+- name: Configure DNS
+  routeros_command:
+    commands:
+      - "/ip dns set servers={{ip.get('dns',{}).get('servers')}}"
+
+- name: Configure NTP
+  routeros_command:
+    commands:
+      - "/system ntp client set enabled={{system.get('ntp',{}).get('client',{}).get('enabled') }}"
+      - "/system ntp client servers add address={{system.get('ntp',{}).get('client',{}).get('servers',{}).get('address')}}"

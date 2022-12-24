@@ -1,0 +1,33 @@
+- name: Gather system resources
+  routeros_command:
+    commands:
+      - /system resource print
+  register: system_resource_print
+
+- name: Show system resources
+  debug:
+    var: system_resource_print.stdout_lines
+
+- name: Gather facts
+  routeros_facts:
+
+- name: Show a fact
+  debug:
+    msg: "First IP address: {{ ansible_net_all_ipv4_addresses[0] }}"
+
+- name: Set system configuration
+  include_tasks: system.yml
+  tags:
+    - system
+
+- name: Set interface configuration
+  include_tasks: interfaces.yml
+  tags:
+    - interfaces
+
+- name: Set DHCP
+  include_tasks: dhcp.yml
+  tags:
+    - hosts
+    - dhcp
+    - ipv4

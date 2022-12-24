@@ -1,0 +1,25 @@
+- name: Configure Bridge
+  routeros_command:
+    commands:
+      - "/interface bridge add name={{item.get('name')}}"
+  with_items: "{{ interface.get('bridge',{}).get('_',[])}}"
+
+- name: Configure Bridge Ports
+  routeros_command:
+    commands:
+      - "/interface bridge port add bridge={{item.0.get('name') }} comment=\"{{item.0.get('comment','defconf') }}\" interface={{item.1}}"
+  with_subelements:
+    - "{{ interface.get('bridge',{}).get('port',[]) }}"
+    - interfaces
+
+- name: Configure VLANs
+  routeros_command:
+    commands:
+      - "/interface vlan add interface={{item.get('interface')}}  name={{item.get('name')}}  vlan-id={{item.get('vlan-id')}}"
+  with_items: "{{ interface.get('vlan',[]) }}"
+
+- name: Configure Addresses
+  routeros_command:
+    commands:
+      - "/ip address add address={{item.get('address')}} disabled={{item.get('disabled', 'yes')}} interface={{item.get('interface')}} network={{item.get('network')}} comment=\"{{item.get('comment')}}\""
+  with_items: "{{ ip.get('address',[]) }}"

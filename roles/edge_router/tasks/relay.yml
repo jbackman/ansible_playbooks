@@ -1,7 +1,0 @@
----
-
-- name: Get broadcast relay
-  get_url: 
-    url: https://github.com/britannic/ubnt-bcast-relay/raw/master/install_ubnt_bcast_relay.v1.2.tgz
-    dest: /tmp/install_ubnt_bcast_relay.v1.2.tgz
-  delegate_to: 127.0.0.1
