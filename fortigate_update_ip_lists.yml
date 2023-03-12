@@ -3,10 +3,6 @@
 - hosts: fortigate
   connection: httpapi
 
-  vars_files:
-    - ~/ansible_data/credentials.yml
-    - ~/ansible_data/vars/internal.yml
-    - ~/ansible_data/vars/external.yml
   vars:
     ansible_httpapi_use_ssl: yes
     ansible_httpapi_validate_certs: no
