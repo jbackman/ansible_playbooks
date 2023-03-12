@@ -7,6 +7,7 @@
     - kernel_modules is iterable
   tags:
     - always
+
 - name: Setup standard user
   include_tasks: task_standard_user.yml
 
