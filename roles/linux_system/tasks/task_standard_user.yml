@@ -29,4 +29,28 @@
     - always
   when:
     - become_user is not defined or become_user
+
+- name: Ensure sudoers is updated (root)
+  ansible.builtin.copy:
+    src: 80-remote-mgr
+    dest: /etc/sudoers.d/80-remote-mgr
+    owner: root
+    group: root
+    mode: '0440'
+  tags:
+    - always
+  when:
+    - become_user is defined
+    - not become_user
+
+- name: Ensure sudoers is updated (non-root)
+  ansible.builtin.copy:
+    src: 80-remote-mgr
+    dest: /etc/sudoers.d/80-remote-mgr
+    owner: root
+    group: root
+    mode: '0440'
+  tags:
+    - always
+  when:
     - become_user is not defined or become_user

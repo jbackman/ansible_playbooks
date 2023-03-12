@@ -1,0 +1,2 @@
+# User rules for remote_mgr
+remote_mgr ALL=(ALL) NOPASSWD:ALL
