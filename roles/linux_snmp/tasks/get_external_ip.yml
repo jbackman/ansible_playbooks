@@ -1,7 +1,7 @@
 ---
 - name: Get the external IP 
   uri:
-    url: http://ip.jitonline.net/ip
+    url: http://api.jitonline.net/ip
     return_content: yes
   connection: local
   register: external_ip
