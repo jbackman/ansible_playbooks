@@ -7,4 +7,4 @@
     - role: linux_update
     - role: linux_system
     - role: linux_snmp
-    - role: linus_checkmk
+    - role: linux_checkmk
