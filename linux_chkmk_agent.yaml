@@ -1,7 +1,7 @@
 - hosts: debian, ubuntu
   gather_facts: True
   vars:
-    pkg_name: check_mk_agent
+    pkg_name: check-mk-agent
     pkg_host: http://netmon
     pkg_site: cmk
     pkg_ver: 2.1.0p21
