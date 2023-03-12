@@ -7,7 +7,6 @@
   fortios_firewall_address:
     vdom: "{{ vdom }}"
     state: "present"
-    enable_log: true
     firewall_address:
       name: "fqdn-{{ item | trim | replace('/','-')}}"
       type: "fqdn"
