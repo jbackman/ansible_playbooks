@@ -1,0 +1,17 @@
+---
+- name: Add required packages for snmpd
+  apt:
+    name: 
+      - snmpd
+    state: absent
+  become: "{{ become_user | default(true) }}"
+  tags:
+    - always
+
+- name: Remove configuration
+  ansible.builtin.file:
+    path: /etc/snmp/snmpd.conf
+    state: absent
+  become: "{{ become_user | default(true) }}"
+  tags:
+    - always
