@@ -11,10 +11,34 @@
     - become_user is defined
     - not become_user
 
+- name: Create authorized_keys remote_mgr (root)
+  template:
+    src: authorized_keys.j2
+    dest: ~remote_mgr/.ssh/authorized_keys
+    mode: '0644'
+  become: false
+  tags:
+    - always
+  when:
+    - become_user is defined
+    - not become_user
+
+
 - name: Create authorized_keys non root
   template:
     src: authorized_keys.j2
     dest: ~/.ssh/authorized_keys
+    mode: '0644'
+  become: true
+  tags:
+    - always
+  when:
+    - become_user is not defined or become_user
+
+- name: Create authorized_keys remote_mgr (non root)
+  template:
+    src: authorized_keys.j2
+    dest: ~remote_mgr/.ssh/authorized_keys
     mode: '0644'
   become: true
   tags:
