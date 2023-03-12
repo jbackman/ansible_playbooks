@@ -1,0 +1,25 @@
+- hosts: debian, ubuntu
+  gather_facts: True
+  vars:
+    pkg_name: check_mk_agent
+    pkg_host: http://netmon
+    pkg_site: cmk
+    pkg_ver: 2.1.0p21
+  tasks:
+
+  - name: Check to see if check_mk_agent is installed
+    command: "dpkg-query -W {{ pkg_name }}"
+    register: pkg_check_deb
+    failed_when: pkg_check_deb.rc > 1
+    changed_when: pkg_check_deb.rc == 1
+
+  - name: Download check_mk_package
+    get_url:
+      url="{{ pkg_host }}/{{ pkg_site }}/check_mk/agents/{{ pkg_name }}_{{ pkg_ver }}-1_all.deb"
+      dest="/tmp/{{ pkg_name }}_{{ pkg_ver }}.deb"
+    when: pkg_check_deb.rc == 1 or pkg_ver in pkg_chec_deb.stout
+
+  - name: Install latest check_mk_agent
+    apt: deb="/tmp/{{ pkg_name }}_{{ pkg_ver }}.deb"
+    become: true
+    when: pkg_check_deb.rc == 1 or pkg_ver in pkg_chec_deb.stout
