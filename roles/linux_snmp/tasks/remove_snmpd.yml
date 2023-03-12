@@ -1,5 +1,5 @@
 ---
-- name: Add required packages for snmpd
+- name: Remove snmpd
   apt:
     name: 
       - snmpd
