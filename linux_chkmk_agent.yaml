@@ -17,9 +17,9 @@
     get_url:
       url="{{ pkg_host }}/{{ pkg_site }}/check_mk/agents/{{ pkg_name }}_{{ pkg_ver }}-1_all.deb"
       dest="/tmp/{{ pkg_name }}_{{ pkg_ver }}.deb"
-    when: pkg_check_deb.rc == 1 or pkg_ver in pkg_check_deb.stdout
+    when: pkg_check_deb.rc == 1 or pkg_ver not in pkg_check_deb.stdout
 
   - name: Install latest check_mk_agent
     apt: deb="/tmp/{{ pkg_name }}_{{ pkg_ver }}.deb"
     become: true
-    when: pkg_check_deb.rc == 1 or pkg_ver in pkg_check_deb.stdout
+    when: pkg_check_deb.rc == 1 or pkg_ver not in pkg_check_deb.stdout
