@@ -7,6 +7,7 @@
       - "python3-pip"
       - "python3-setuptools"
       - "tcpdump"
+      - "sudo"
       - "vim"
     state: latest
   become: "{{ become_user | default(true) }}"
