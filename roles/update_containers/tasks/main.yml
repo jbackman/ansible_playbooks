@@ -8,6 +8,10 @@
   ansible.builtin.pip:
     name: docker
 
+- name: Install docker-compose python package
+  ansible.builtin.pip:
+    name: docker-compose
+
 - name: Tear down existing services
   community.docker.docker_compose:
     project_src: /srv
