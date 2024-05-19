@@ -13,7 +13,7 @@
     name: docker-compose
 
 - name: Tear down existing services
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: /srv
     state: absent
 
