@@ -6,7 +6,7 @@
 
 - name: Install docker python package
   ansible.builtin.pip:
-    name: docker
+    name: docker==6.1.3
 
 - name: Install docker-compose python package
   ansible.builtin.pip:
