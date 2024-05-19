@@ -21,7 +21,6 @@
   community.docker.docker_compose:
     project_src: /srv
     pull: true
-    removie_orphans: true
   register: output
 
 - name: Show results
