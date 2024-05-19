@@ -1,4 +1,4 @@
---
+---
 collections:
   - name: fortinet.fortios
   - name: community.docker
