@@ -1,0 +1,15 @@
+--
+- name: Tear down existing services
+  community.docker.docker_compose:
+    project_src: /srv
+  state: absent
+- name: Create and start services
+  community.docker.docker_compose:
+    project_src: /srv
+    pull: true
+    removie_orphans: true
+  register: output
+
+- name: Show results
+  ansible.builtin.debug:
+    var: output

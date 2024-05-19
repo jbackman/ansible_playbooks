@@ -18,14 +18,14 @@
   register: stat_result
 
 - name: Generate an OpenSSL account key with the default values (4096 bits, RSA)
-  openssl_privatekey:
+  community.crypto.openssl_privatekey:
     path: "{{ letsencrypt_account_key }}"
     backup: yes
   delegate_to: 127.0.0.1
   when: not stat_result.stat.exists
 
 - name: Make sure account exists and has given contacts. We agree to TOS.
-  acme_account:
+  community.crypto.acme_account:
     account_key_src: "{{ letsencrypt_account_key }}"
     state: present
     terms_agreed: yes
@@ -42,14 +42,14 @@
   register: pk_result
 
 - name: Generate an OpenSSL private key with the default values (4096 bits, RSA)
-  openssl_privatekey:
+  community.crypto.openssl_privatekey:
     path: "{{ letsencrypt_keys_dir }}/{{ domain_name }}.key"
     backup: yes
   delegate_to: 127.0.0.1
   when: not pk_result.stat.exists
 
 - name: Generate an OpenSSL Certificate Signing Request
-  openssl_csr:
+  community.crypto.openssl_csr:
     path: "{{ letsencrypt_csrs_dir }}/{{ domain_name }}.csr"
     privatekey_path: "{{ letsencrypt_keys_dir }}/{{ domain_name }}.key"
     common_name: "{{ domain_name }}"
@@ -62,7 +62,7 @@
   delegate_to: 127.0.0.1
 
 - name: Create a challenge for using a account key file.
-  acme_certificate:
+  community.crypto.acme_certificate:
     account_key_src: "{{ letsencrypt_account_key }}"
     account_email: "{{ acme_email }}"
     src: "{{ letsencrypt_csrs_dir }}/{{ domain_name}}.csr"
@@ -75,7 +75,7 @@
   register: challenge
 
 - name: Update DNS
-  cloudflare_dns:
+  community.general.cloudflare_dns:
     zone: "{{ home_zone }}"
     record: "{{ challenge.challenge_data[item]['dns-01'].record }}"
     type: TXT
@@ -92,7 +92,7 @@
     minutes: 3
 
 - name: Let the challenge be validated and retrieve the cert and intermediate certificate
-  acme_certificate:
+  community.crypto.acme_certificate:
     account_key_src: "{{ letsencrypt_account_key }}"
     account_email: "{{ acme_email }}"
     src: "{{ letsencrypt_csrs_dir }}/{{ domain_name }}.csr"
