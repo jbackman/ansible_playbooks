@@ -29,8 +29,6 @@
   - name: Check if a reboot is needed for CentOS
     shell:
       cmd: "needs-restarting -r"
-    changed_when: false
-    failed_when: reboot_required.rc != 0 and reboot_required.rc != 1
     check_mode: false
     register: reboot_required
   - name: Reboot the Centos server
@@ -41,4 +39,4 @@
       pre_reboot_delay: 0
       post_reboot_delay: 30
       test_command: uptime
-    when: reboot_required
+    when: reboot_required == 1
