@@ -7,7 +7,10 @@
     ansible_httpapi_use_ssl: yes
     ansible_httpapi_validate_certs: no
     ansible_httpapi_port: 8443
-
+  vars_files:
+    - ~/ansible_data/credentials.yml
+    - ~/ansible_data/vars/internal.yml
+    - ~/ansible_data/vars/external.yml
   collections:
     - fortinet.fortios
 
