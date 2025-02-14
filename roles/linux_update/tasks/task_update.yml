@@ -20,7 +20,6 @@
   register: reboot_required_file
   stat: 
     path: /var/run/reboot-required i
-    get_md5: no
   tags:
     - always
 
