@@ -2,9 +2,9 @@
   gather_facts: True
   vars:
     pkg_name: check-mk-agent
-    pkg_host: http://netmon
+    pkg_host: http://10.5.69.9
     pkg_site: cmk
-    pkg_ver: 2.1.0p21
+    pkg_ver: 2.2.0p40
   tasks:
 
   - name: Check to see if check_mk_agent is installed
