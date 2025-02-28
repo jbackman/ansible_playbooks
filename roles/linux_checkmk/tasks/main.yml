@@ -1,7 +1,7 @@
 #    chkmk_pkg_name: check-mk-agent
-#    chkmk_pkg_host: http://netmon
+#    chkmk_pkg_host: http://10.5.69.9
 #    chkmk_pkg_site: cmk
-#    chkmk_pkg_ver: 2.1.0p21
+#    chkmk_pkg_ver: 2.2.0p40
 
 - name: Check to see if check_mk_agent is installed
   command: "dpkg-query -W {{ chkmk_pkg_name }}"
