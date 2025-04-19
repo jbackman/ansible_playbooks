@@ -4,7 +4,7 @@
     pkg_name: check-mk-agent
     pkg_host: http://10.5.69.9
     pkg_site: cmk
-    pkg_ver: 2.2.0p40
+    pkg_ver: 2.2.0p41
   tasks:
 
   - name: Check to see if check_mk_agent is installed
