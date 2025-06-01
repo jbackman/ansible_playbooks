@@ -1,0 +1,17 @@
+---
+
+- hosts: localhost
+
+  vars_files:
+    - ~/ansible_data/credentials.yml
+    - ~/ansible_data/vars/internal.yml
+    - ~/ansible_data/vars/external.yml
+    - ~/ansible_data/vars/letsencrypt.yml
+    - ~/ansible_data/vars/cloudflare.yml
+  vars:
+    ansible_httpapi_use_ssl: yes
+    ansible_httpapi_validate_certs: no
+    ansible_httpapi_port: 8443
+
+  roles:
+    - role: fortigate_letsencrypt
