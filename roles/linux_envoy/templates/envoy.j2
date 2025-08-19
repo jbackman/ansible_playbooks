@@ -39,6 +39,13 @@ static_resources:
 {% for item in envoy_params.clusters %}    - name: {{ item.name }}
       connect_timeout: {{ item.connect_timeout }}
       per_connection_buffer_limit_bytes: {{ item.per_connection_buffer_limit_bytes }}
-      hosts: 
-        {{ item.hosts| to_nice_yaml(indent=2) | indent(8) }} 
+      type: STATIC
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: {{ item.name }}
+        endpoints:
+        - lb_endpoints:
+          - endpoint: 
+              address:
+                {{ item.hosts| to_nice_yaml(indent=2) | indent(16) }} 
 {%- endfor -%}
