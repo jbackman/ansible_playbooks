@@ -19,7 +19,7 @@
 - name: Check if a reboot is needed on all servers
   register: reboot_required_file
   ansible.builtin.stat: 
-    path: /var/run/reboot-required i
+    path: /var/run/reboot-required
   tags:
     - always
 
