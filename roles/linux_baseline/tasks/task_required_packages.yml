@@ -31,4 +31,3 @@
 - name: Install the latest version of step CLI
   ansible.builtin.include_role:
     name: smallstep.cli.install_step_cli
-  become: "{{ become_user | default(true) }}"
