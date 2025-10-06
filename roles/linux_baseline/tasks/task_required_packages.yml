@@ -27,3 +27,8 @@
     state: absent
   become: "{{ become_user | default(true) }}"
   when: "'apache' not in group_names"
+
+- name: Install the latest version of step CLI
+  ansible.builtin.include_role:
+    name: smallstep.cli.install_step_cli
+  become: "{{ become_user | default(true) }}"
