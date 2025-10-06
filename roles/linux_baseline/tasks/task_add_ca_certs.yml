@@ -3,7 +3,7 @@
   ansible.builtin.command: 
     argv: 
       - step 
-      - cai
+      - ca
       - bootstrap 
       - --ca-url https://ca.home 
       - --fingerprint 70e19eaccd49e4e7bed26adce4b426be6facd82e98526aa38493b00cf29b86f4 
