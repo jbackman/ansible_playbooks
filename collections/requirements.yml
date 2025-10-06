@@ -3,4 +3,4 @@ collections:
   - name: fortinet.fortios
   - name: community.general
   - name: community.docker
-
+  - name: smallstep.cli
