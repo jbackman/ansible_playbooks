@@ -1,6 +1,6 @@
 ---
 - name: Add host entries
-  lineinfile:
+  ansible.builtin.blockinfile:
     dest: /etc/hosts
     state: present
     block: |
