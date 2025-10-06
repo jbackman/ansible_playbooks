@@ -1,25 +1,23 @@
 ---
 
-- name: Ensure Latest Docker
-  apt:
-    name: 
-      - docker-ce
-    state: latest
-  become: "{{ become_user | default(true) }}"
+#- name: Ensure Latest Docker
+#  apt:
+#    name: 
+#      - docker-ce
+#    state: latest
+#  become: "{{ become_user | default(true) }}"
   
 - name: Clean up
   docker_prune:
     containers: yes
     images: yes
     builder_cache: yes
-  become: "{{ become_user | default(true) }}"
     
 - name: Create a Docker Network
   docker_network:
     name: "{{ item.name }}"
     ipam_config: "{{ item.ipam_config }}"
   loop: "{{ docker_networks }}"
-  become: "{{ become_user | default(true) }}"
 
 - name: Set source dirs
   set_fact:
@@ -35,7 +33,6 @@
   - "{{ source_dirs }}"
   when: 
     - item.0.tag in group_names
-  become: "{{ become_user | default(true) }}"
   ignore_errors: yes
 
 - name: Deploy Docker Containers
@@ -54,7 +51,6 @@
   when: 
     - item.tag in group_names
     - item.networks is defined
-  become: "{{ become_user | default(true) }}"
 
 - name: Deploy Docker Containers without networks
   docker_container:
@@ -72,5 +68,4 @@
   when: 
     - item.tag in group_names
     - item.networks is not defined
-  become: "{{ become_user | default(true) }}"
 

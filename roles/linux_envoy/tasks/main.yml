@@ -8,7 +8,7 @@
     - always
 
 - name: Include task to install envoy
-  include_tasks: task_envoy.yaml
+  include_tasks: task_initial_envoy.yml
   when: "'envoy' in group_names"
   tags:
     - initial

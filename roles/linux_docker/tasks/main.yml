@@ -1,12 +1,4 @@
 ---
-- name: Set become
-  set_fact:
-    become_user: false
-  when:
-    - ansible_user == 'root'
-  tags:
-    - always
-
 - name: Include task intial docker config
   include_tasks: task_initial_docker.yml 
   when: "'docker' in group_names"
