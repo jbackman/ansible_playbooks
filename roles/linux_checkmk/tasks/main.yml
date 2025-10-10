@@ -36,3 +36,4 @@
       - provision
       - --password 
       - "{{ lookup('ansible.builtin.env', 'CMK_KEY') }}"
+      - --trust-cert
