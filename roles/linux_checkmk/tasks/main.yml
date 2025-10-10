@@ -27,7 +27,7 @@
       - cmk-agent-ctl
       - register 
       - --hostname
-      - {{ inventory_hostname_short }}
+      - "{{ inventory_hostname_short }}"
       - --server
       - monitor.home:8000
       - --site
@@ -35,4 +35,4 @@
       - --user
       - provision
       - --password 
-      - {{ lookup('ansible.builtin.env', 'CMK_KEY') }}
+      - "{{ lookup('ansible.builtin.env', 'CMK_KEY') }}"
