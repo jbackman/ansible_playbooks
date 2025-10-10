@@ -1,9 +1,9 @@
 ---
 collections:
-  - name: fortinet.fortios
+  - name: artis3n.tailscale
   - name: community.general
   - name: community.docker
+  - name: fortinet.fortios
   - name: smallstep.cli
-  - name: artis3n.tailscale
   - name: trfore.smallstep
 
