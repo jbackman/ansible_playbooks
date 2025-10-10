@@ -13,6 +13,7 @@
   get_url:
     url="{{ chkmk_pkg_host }}/{{ chkmk_pkg_site }}/check_mk/agents/{{ chkmk_pkg_name }}_{{ chkmk_pkg_ver }}-1_all.deb"
     dest="/tmp/{{ chkmk_pkg_name }}_{{ chkmk_pkg_ver }}.deb"
+  validate_certs: no
   when: chkmk_pkg_check_deb.rc == 1 or chkmk_pkg_ver not in chkmk_pkg_check_deb.stdout
 
 - name: Install latest check_mk_agent
