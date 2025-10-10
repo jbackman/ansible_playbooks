@@ -11,6 +11,7 @@
       - "tcpdump"
       - "vim"
     state: latest
+  when: ansible_distribution == 'Debian'
   become: "{{ become_user | default(true) }}"
 
 - name: Install required packages
