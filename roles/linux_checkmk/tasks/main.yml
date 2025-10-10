@@ -20,3 +20,14 @@
   apt: deb="/tmp/{{ chkmk_pkg_name }}_{{ chkmk_pkg_ver }}.deb"
   become: true
   when: chkmk_pkg_check_deb.rc == 1 or chkmk_pkg_ver not in chkmk_pkg_check_deb.stdout
+
+- name: Register agent
+  ansible.builtin.command: 
+    argv:
+      - cmk-agent-ctl
+      - register 
+      - -H {{ inventory_hostname_short }}
+      - -s monitor.home:8000
+      - -i cmk
+      - -U provision
+      - -P {{ lookup('ansible.builtin.env', 'CMK_KEY') }}
