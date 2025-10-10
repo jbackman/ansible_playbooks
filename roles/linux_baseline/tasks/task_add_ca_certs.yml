@@ -1,7 +1,8 @@
 ---
 
 - name: Bootstrap CA Root Certificate
-  role: trfore.smallstep.step_ca_cert
+  include_role: 
+    name: trfore.smallstep.step_ca_cert
   vars:
     step_ca_fingerprint: "70e19eaccd49e4e7bed26adce4b426be6facd82e98526aa38493b00cf29b86f4"
     step_ca_url: "https://ca"

@@ -13,3 +13,6 @@
 
 - name: Set CA certificate
   include_tasks: task_add_ca_certs.yml
+
+- name: Setup Syslog
+  include_tasks: task_setup_syslog.yml

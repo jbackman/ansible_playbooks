@@ -1,0 +1,20 @@
+---
+- name: Ensure rsyslog package is installed
+      ansible.builtin.package:
+        name: rsyslog
+        state: present
+
+- name: Configure rsyslog (optional - example for client-side forwarding)
+      ansible.builtin.template:
+        src: templates/remote.conf.j2 # Path to your rsyslog template
+        dest: /etc/rsyslog.conf.d/remote.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Restart rsyslog
+
+- name: Ensure rsyslog service is running and enabled
+      ansible.builtin.service:
+        name: rsyslog
+        state: started
+        enabled: true
