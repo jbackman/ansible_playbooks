@@ -34,7 +34,7 @@
       - "ubuntu-release-upgrader-core"
     state: latest
   become: "{{ become_user | default(true) }}"
-  when: ansible_distribution == 'Ubuntu' || ansible_distribution == 'Debian'
+  when: ansible_distribution == 'Ubuntu'
 
 - name: Remove Apache
   apt:

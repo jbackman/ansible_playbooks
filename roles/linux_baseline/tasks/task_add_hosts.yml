@@ -1,9 +1,0 @@
----
-- name: Add host entries
-  ansible.builtin.blockinfile:
-    dest: /etc/hosts
-    state: present
-    block: |
-      10.5.69.8 ca.home
-      10.5.69.9 monitor.home
-    create: yes  
