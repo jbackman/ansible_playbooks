@@ -7,7 +7,7 @@
 - name: Configure rsyslog (optional - example for client-side forwarding)
   ansible.builtin.template:
     src: templates/remote.conf.j2 # Path to your rsyslog template
-    dest: /etc/rsyslog.d/remote.conf
+    dest: /etc/rsyslog.d/10-remote.conf
     owner: root
     group: root
     mode: '0644'
