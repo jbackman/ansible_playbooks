@@ -5,7 +5,7 @@
       - step 
       - ca
       - bootstrap 
-      - --ca-url https://ca.home 
+      - --ca-url https://ca 
       - --fingerprint 70e19eaccd49e4e7bed26adce4b426be6facd82e98526aa38493b00cf29b86f4 
 
 - name: Install Root Certificate
@@ -27,3 +27,7 @@
 - name: Update CA trust store (SUSE)
   ansible.builtin.command: update-ca-certificates
   when: ansible_facts['os_family'] == "Suse"
+
+- name: Update CA trust store (Alpine)
+  ansible.builtin.command: update-ca-certificates
+  when: ansible_facts['os_family'] == "Alpine"
