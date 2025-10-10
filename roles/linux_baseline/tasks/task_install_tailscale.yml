@@ -3,7 +3,7 @@
   include_role:
     name: artis3n.tailscale.machine
   vars:
-    tailscale_authkey: "{{ q('dict', tailscale_key) }}"
+    tailscale_authkey: "{{  tailscale_key }}"
     tailscale_tags: 
       - "external"
   ignore_errors: true
