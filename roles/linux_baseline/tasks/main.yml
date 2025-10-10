@@ -4,6 +4,8 @@
     become_user: false
   when:
     - ansible_user == 'root'
+- name: Set hosts
+  include_tasks: task_set_hosts.yml
 
 - name: Include task to install required packages
   include_tasks: task_required_packages.yml
