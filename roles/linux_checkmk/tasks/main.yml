@@ -37,3 +37,4 @@
       - --password 
       - "{{ lookup('ansible.builtin.env', 'CMK_KEY') }}"
       - --trust-cert
+   when: ansible_facts.ansible_architecture == "x86_64"
