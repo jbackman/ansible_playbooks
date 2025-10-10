@@ -1,5 +1,11 @@
 ---
 
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+  when: ansible_distribution == 'Debian'
+  become: "{{ become_user | default(true) }}"
+
 - name: Install required packages
   apt:
     name: 
