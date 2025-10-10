@@ -6,3 +6,4 @@
     tailscale_authkey: "{{ lookup('env', 'TAILSCALE_KEY') }}"
     tailscale_tags: 
       - "external"
+  ignore_errors: true
