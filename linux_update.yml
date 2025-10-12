@@ -40,7 +40,7 @@
       post_reboot_delay: 30
       test_command: uptime
     when: reboot_required.rc == 1
-- name: Check if Alpine Linux needs a reboot
+- name: Check if Alpine Linux needs updates 
   hosts: alpine
   become: yes  # Required for package management and system checks
 
@@ -60,7 +60,7 @@
       ansible.builtin.debug:
         msg: "Reboot required: {{ reboot_required.stat.exists }}"
 
-          #- name: Reboot if required
-          #ansible.builtin.reboot:
-          #msg: "Reboot initiated by Ansible due to kernel update"
-          #when: reboot_required.rc==0
+    - name: Reboot if required
+      ansible.builtin.reboot:
+        msg: "Reboot initiated by Ansible due to kernel update"
+      when: reboot_required.stat.exists
