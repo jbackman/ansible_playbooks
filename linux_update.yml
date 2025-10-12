@@ -60,9 +60,9 @@
 
     - name: Display reboot status
       ansible.builtin.debug:
-        msg: "Reboot required: {{ reboot_required }}"
+        msg: "Reboot required: {{ reboot_required.rc }}"
 
     - name: Reboot if required
       ansible.builtin.reboot:
         msg: "Reboot initiated by Ansible due to kernel update"
-      when: reboot_required
+      when: reboot_required.rc==0
