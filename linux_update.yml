@@ -54,13 +54,11 @@
     - name: Get new kernel package version after update
       ansible.builtin.shell: ls /run/reboot-required
       register: reboot_required
-      changed_when: true
       ignore_errors: true
-      when: apk_update_result.changed # Only check if updates occurred
 
     - name: Display reboot status
       ansible.builtin.debug:
-        msg: "Reboot required: {{ reboot_required.rc }}"
+        msg: "Reboot required: {{ reboot_required }}"
 
     - name: Reboot if required
       ansible.builtin.reboot:
