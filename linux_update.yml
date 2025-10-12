@@ -58,7 +58,7 @@
 
     - name: Display reboot status
       ansible.builtin.debug:
-        msg: "Reboot required: {{ reboot_required.exists }}"
+        msg: "Reboot required: {{ reboot_required.stat.exists }}"
 
           #- name: Reboot if required
           #ansible.builtin.reboot:
