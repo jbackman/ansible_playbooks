@@ -46,7 +46,7 @@
 
   tasks:
     - name: Get current kernel package version
-      ansible.builtin.shell: apk info -e linux-lts | grep -oP 'linux-lts-\K[0-9.]+'
+      ansible.builtin.shell: apk info -e linux-lts | grep -o 'linux-lts-\K[0-9.]+'
       register: current_kernel_version
       changed_when: false # This task doesn't change the system
 
@@ -57,7 +57,7 @@
       register: apk_update_result
 
     - name: Get new kernel package version after update
-      ansible.builtin.shell: apk info -e linux-lts | grep -oP 'linux-lts-\K[0-9.]+'
+      ansible.builtin.shell: apk info -e linux-lts | grep -o 'linux-lts-\K[0-9.]+'
       register: new_kernel_version
       changed_when: false
       when: apk_update_result.changed # Only check if updates occurred
