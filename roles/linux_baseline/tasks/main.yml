@@ -10,9 +10,6 @@
 - name: Include task to install required packages
   include_tasks: task_required_packages.yml
 
-- name: Install Tailscale
-  include_tasks: task_install_tailscale.yml
-
 - name: Set CA certificate
   include_tasks: task_add_ca_certs.yml
 
