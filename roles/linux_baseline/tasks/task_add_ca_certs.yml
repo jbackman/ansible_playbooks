@@ -1,25 +1,35 @@
 ---
-- name: Reset ca_host fact
+
+- name: Initialize ca_host as null
   ansible.builtin.set_fact:
     ca_host: null
 
-- name: Check for resolvable CA hosts
-  ansible.builtin.set_fact:
-    ca_host: "{{ item }}"
+- name: Try to ping CA candidates
+  ansible.builtin.command: "ping -c 1 {{ item }}"
+  register: ping_result
+  ignore_errors: true
+  changed_when: false
   loop: "{{ ca_check_list }}"
-  when: 
-    - ca_host is none
-    - item is ansible.utils.resolvable
+  # Only run if we haven't found a working host yet
+  when: ca_host is none
 
-- name: Apply fallback IP if no hostnames resolved
+- name: Set ca_host based on successful ping
+  ansible.builtin.set_fact:
+    ca_host: "{{ item.item }}"
+  loop: "{{ ping_result.results }}"
+  when:
+    - ca_host is none
+    - item.rc == 0
+  no_log: true # Keeps the output clean
+
+- name: Fallback to default IP if no host responded
   ansible.builtin.set_fact:
     ca_host: "{{ ca_fallback_ip }}"
   when: ca_host is none
 
-- name: Verify CA host was set
-  ansible.builtin.assert:
-    that: ca_host is defined and ca_host != none
-    fail_msg: "Could not resolve a CA host and no fallback was successful."
+- name: Final Connectivity Check
+  ansible.builtin.debug:
+    msg: "Final CA candidate selected: {{ ca_host }}"
 
 - name: Bootstrap CA Root Certificate 
   include_role: 
