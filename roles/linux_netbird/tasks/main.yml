@@ -37,3 +37,49 @@
   when: "'Connected' not in netbird_status.stdout"
   # This prevents the setup key from being logged in plain text
   no_log: true
+- name: Check if systemd-resolved is the active resolver
+  stat:
+    path: /etc/resolv.conf
+  register: resolv_stat
+
+- name: Configure systemd-resolved
+  block:
+    - name: Check NetBird status for IP
+      shell: "netbird status | grep 'NetBird IP' | awk '{print $3}' | cut -d/ -f1"
+      register: netbird_ip
+      failed_when: false
+      changed_when: false
+
+    - name: Configure DNS in resolved.conf
+      lineinfile:
+        path: /etc/systemd/resolved.conf
+        regexp: '^#?DNS='
+        line: "DNS={{ netbird_ip.stdout }}"
+      when: netbird_ip.stdout | length > 0
+      notify: Restart systemd-resolved
+
+    - name: Configure Search Domains in resolved.conf
+      lineinfile:
+        path: /etc/systemd/resolved.conf
+        regexp: '^#?Domains='
+        line: "Domains=jitonline.local home"
+      notify: Restart systemd-resolved
+
+    - name: Ensure systemd-resolved is enabled and started
+      service:
+        name: systemd-resolved
+        state: started
+        enabled: yes
+
+  # Only run if /etc/resolv.conf is a symlink to systemd-resolved's stub
+  when: 
+    - resolv_stat.stat.is_lnk is defined 
+    - resolv_stat.stat.is_lnk
+    - "'run/systemd/resolve' in resolv_stat.stat.lnk_source"
+
+- name: Report resolver status
+  debug:
+    msg: "Skipping configuration: /etc/resolv.conf is not managed by systemd-resolved."
+  when: >
+    not resolv_stat.stat.is_lnk or 
+    'run/systemd/resolve' not in resolv_stat.stat.lnk_source
