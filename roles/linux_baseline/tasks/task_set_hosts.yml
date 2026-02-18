@@ -1,11 +1,11 @@
 ---
 - name: set up host alias
   ansible.builtin.blockinfile:
-    path: /etc/myconfig.conf
     block: |
-       100.94.75.110   ca.home
-       100.123.244.114 logs.home
-       100.96.123.31   monitor.home
-       100.127.134.38  semaphore.home
+       10.5.69.8   ca.home
+       10.5.69.51  logs.home
+       10.5.69.5   zabbix.home
+       10.5.69.24  semaphore.home
+       10.5.69.11  backup.home
     dest: /etc/hosts
     state: absent
