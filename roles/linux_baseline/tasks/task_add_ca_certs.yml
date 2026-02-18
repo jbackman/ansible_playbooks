@@ -2,12 +2,12 @@
 - name: Check if ca.jitonline.net is resolvable or not
   ansible.builtin.set_fact:
     ca_host: "ca.jitonline.local"
-  when: {{ "ca.jitonline.net" is ansible.utils.resolvable }}
+  when: "{{ 'ca.jitonline.net' is ansible.utils.resolvable }}"
 
 - name: Check if ca.home is resolvable or not
   ansible.builtin.set_fact:
     ca_host: "ca.home"
-  when: {{ "ca.home" is ansible.utils.resolvable }}
+  when: "{{ 'ca.home' is ansible.utils.resolvable }}"
 
 - name: Bootstrap CA Root Certificate 
   include_role: 
