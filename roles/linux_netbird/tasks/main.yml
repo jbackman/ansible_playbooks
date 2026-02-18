@@ -61,7 +61,7 @@
       lineinfile:
         path: /etc/systemd/resolved.conf
         regexp: '^#?Domains='
-        line: "Domains=jit-online.local home"
+        line: "Domains=jitonline.local home"
       notify: Restart systemd-resolved
 
   # This block only runs if the service is present and active
