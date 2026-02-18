@@ -1,0 +1,8 @@
+---
+# Hostnames to check in order of priority
+ca_check_list:
+  - "ca.jitonline.local"
+  - "ca.home"
+
+# The final fallback if none of the above resolve
+ca_fallback_ip: "10.5.69.8"
