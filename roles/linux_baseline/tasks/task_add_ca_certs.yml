@@ -1,4 +1,16 @@
 ---
+- name: Check if is resolvable or not
+  ansible.builtin.set_fact:
+    via_netbird: ca.jitonline.local
+    via_home: ca.home
+
+- name: Bootstrap CA Root Certificate
+  include_role: 
+    name: trfore.smallstep.step_ca_cert
+  vars:
+    step_ca_fingerprint: "70e19eaccd49e4e7bed26adce4b426be6facd82e98526aa38493b00cf29b86f4"
+    step_ca_url: "https://ca.jitonline.local"
+  when: "{{via_netbird is ansible.utils.resolvable }}"
 
 - name: Bootstrap CA Root Certificate
   include_role: 
@@ -6,6 +18,9 @@
   vars:
     step_ca_fingerprint: "70e19eaccd49e4e7bed26adce4b426be6facd82e98526aa38493b00cf29b86f4"
     step_ca_url: "https://ca.home"
+  when: "{{ via_home is ansible.utils.resolvable }}"
+
+
 
 - name: Update CA trust store (Red Hat/CentOS)
   ansible.builtin.command: update-ca-trust extract
