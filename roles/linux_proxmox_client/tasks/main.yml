@@ -11,7 +11,7 @@
 
     - name: Create directory for GPG keys
       file:
-        path: /etc/apt/keyrings
+        path: /usr/share/keyrings
         state: directory
         mode: '0755'
 
@@ -21,17 +21,42 @@
         dest: /usr/share/keyrings/proxmox-release-{{ ansible_distribution_release }}.gpg
         mode: '0644'
 
-    - name: Add Proxmox Backup Client repository
+    # Specific logic for Debian 13 (Trixie)
+    - name: Configure Proxmox repo for Debian 13 (DEB822 format)
+      copy:
+        dest: /etc/apt/sources.list.d/pbs-client.sources
+        content: |
+          Types: deb
+          URIs: http://download.proxmox.com/debian/pbs-client
+          Suites: trixie
+          Components: main
+          Signed-By: {{ pbs_gpg_key_dest }}
+        owner: root
+        group: root
+        mode: '0644'
+      when: ansible_distribution == "Debian" and ansible_distribution_major_version == "13"
+      register: pbs_repo_trixie
+
+    # Fallback logic for older Debian/Ubuntu versions
+    - name: Configure Proxmox repo for older versions
       apt_repository:
-        repo: "{{ pbs_repository_line }}"
+        repo: "deb http://download.proxmox.com/debian/pbs-client {{ ansible_distribution_release }} pbs-client-no-subscription"
         state: present
         filename: pbs-client
-        update_cache: yes
+      when: not (ansible_distribution == "Debian" and ansible_distribution_major_version == "13")
+      register: pbs_repo_legacy
 
-    - name: Install proxmox-backup-client
+    - name: Install proxmox-backup-client Debian
       apt:
         name: proxmox-backup-client
         state: present
+      when: ansible_distribution == "Debian"
+    
+    - name: Install proxmox-backup-client Ubuntu
+      apt:
+        name: proxmox-backup-client-static
+        state: present
+      when: ansible_distribution == "Ubuntu"
 
     - name: Create backup.sh script in /root
       template:
