@@ -1,5 +1,4 @@
 ---
----
 - name: Reset ca_host fact
   ansible.builtin.set_fact:
     ca_host: null
