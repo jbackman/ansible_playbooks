@@ -13,4 +13,6 @@
     - role: linux_system
     - role: linux_snmp
     - role: linux_zabbix
+      when: ansible_hostname != 'zabbix' 
     - role: linux_proxmox_client
+      when: ansible_hostname != 'backup' 
