@@ -12,4 +12,4 @@
     - role: linux_netbird
     - role: linux_snmp
     - role: linux_zabbix
-    - role: linux_proxmox
+    - role: linux_proxmox_client
