@@ -8,8 +8,8 @@
   roles:
     - role: linux_baseline
     - role: linux_update
-    - role: linux_system
     - role: linux_netbird
+    - role: linux_system
     - role: linux_snmp
     - role: linux_zabbix
     - role: linux_proxmox_client
