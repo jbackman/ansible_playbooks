@@ -2,8 +2,9 @@
 # The repository to use. Options: pbs-no-subscription, pbs-enterprise
 pbs_repository_line: "deb [signed-by=/usr/share/keyrings/release-{{ ansible_distribution_release }}.gpg] http://download.proxmox.com/debian/pbs-client {{ ansible_distribution_release }} pbs-client-no-subscription"
 
-# Key URL for Proxmox
+# Proxmox GPG Key
 pbs_gpg_key_url: "https://enterprise.proxmox.com/debian/proxmox-release-{{ ansible_distribution_release }}.gpg"
+pbs_gpg_key_dest: "/usr/share/keyrings/proxmox-archive-keyring.gpg"
 
 proxmox_backup_password: "REPLACEME"
 pbs_fingerprint: "fd:e5:31:66:f8:dc:14:a7:41:b4:5f:d5:bf:00:7a:93:7c:29:eb:44:d9:27:89:d7:e8:d8:52:a3:90:b3:46:5c"
