@@ -18,7 +18,7 @@
     - name: Download Proxmox GPG key
       get_url:
         url: "{{ pbs_gpg_key_url }}"
-        dest: /usr/share/keyrings/proxmox-release-{{ ansible_distribution_release }}.gpg
+        dest: "{{ pbs_gpg_key_dest }}"
         mode: '0644'
 
     # Specific logic for Debian 13 (Trixie)
