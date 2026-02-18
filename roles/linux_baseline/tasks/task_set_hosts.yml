@@ -8,4 +8,4 @@
        10.5.69.24  semaphore.home
        10.5.69.11  backup.home
     dest: /etc/hosts
-    state: absent
+    state: present
