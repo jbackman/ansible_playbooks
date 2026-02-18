@@ -1,0 +1,29 @@
+---
+- name: Verify OS family
+  assert:
+    that:
+      - ansible_os_family == "Debian"
+    fail_msg: "This role only supports Debian-based distributions (Debian/Ubuntu)."
+
+- name: Download Zabbix repository package
+  get_url:
+    url: "https://repo.zabbix.com/zabbix/{{ zabbix_version }}/{{ ansible_distribution | lower }}/pool/main/z/zabbix-release/zabbix-release_latest+{{ ansible_distribution | lower }}{{ ansible_distribution_version }}_all.deb"
+    dest: "/tmp/zabbix-release.deb"
+    mode: '0644'
+
+- name: Install Zabbix repository
+  apt:
+    deb: "/tmp/zabbix-release.deb"
+    state: present
+
+- name: Update apt cache and install Zabbix Agent2
+  apt:
+    name: zabbix-agent2
+    update_cache: yes
+    state: present
+
+- name: Ensure Zabbix Agent2 service is running
+  service:
+    name: zabbix-agent2
+    state: started
+    enabled: yes

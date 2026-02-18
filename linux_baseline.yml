@@ -10,4 +10,3 @@
     - role: linux_update
     - role: linux_system
     - role: linux_snmp
-    - role: linux_checkmk
