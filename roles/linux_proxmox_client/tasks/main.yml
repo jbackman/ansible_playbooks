@@ -78,6 +78,18 @@
     msg: "Skipping Proxmox Backup Client installation: Architecture {{ ansible_architecture }} is not supported."
   when: ansible_architecture not in ['x86_64', 'amd64', 'x86']
 
+- name: Ensure cron package is installed
+  apt:
+    name: cron
+    state: present
+    update_cache: yes
+
+- name: Ensure cron service is started and enabled
+  service:
+    name: cron
+    state: started
+    enabled: yes
+
 - name: Set random hour and minute for the cron job
   set_fact:
     cron_minute: "{{ 59 | random(seed=inventory_hostname) }}"
