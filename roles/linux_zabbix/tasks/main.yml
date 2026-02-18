@@ -6,10 +6,17 @@
   failed_when: false
   changed_when: false
 
-- name: Install Zabbix Repository
+- name: Install Zabbix Repository Debian
   apt:
     deb: "https://repo.zabbix.com/zabbix/{{ zabbix_version }}/release/{{ ansible_distribution | lower }}/pool/main/z/zabbix-release/zabbix-release_latest+{{ ansible_distribution | lower }}{{ ansible_distribution_major_version }}_all.deb"
     state: present
+  when: ansible_distribution == 'Debian'
+
+- name: Install Zabbix Repository Ubuntu
+  apt:
+    deb: "https://repo.zabbix.com/zabbix/{{ zabbix_version }}/release/{{ ansible_distribution | lower }}/pool/main/z/zabbix-release/zabbix-release_latest_{{ zabbix_verion }}+{{ ansible_distribution | lower }}{{ ansible_distribution_version }}_all.deb"
+    state: present
+  when: ansible_distribution == 'Ubuntu'
 
 - name: Install Zabbix Agent2
   apt:
