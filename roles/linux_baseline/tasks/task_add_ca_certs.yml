@@ -1,23 +1,26 @@
 ---
-- name: Check if hosts ar resolvable or not
+---
+- name: Reset ca_host fact
   ansible.builtin.set_fact:
-    ca_jit: "{{ 'ca.jitonline.local' is ansible.utils.resolvable }}"
-    ca_home: "{{ 'ca.home' is ansible.utils.resolvable }}"
+    ca_host: null
 
-- name: Check if ca.jitonline.net is resolvable or not
+- name: Check for resolvable CA hosts
   ansible.builtin.set_fact:
-    ca_host: "ca.jitonline.local"
-  when: ca_jit
+    ca_host: "{{ item }}"
+  loop: "{{ ca_check_list }}"
+  when: 
+    - ca_host is none
+    - item is ansible.utils.resolvable
 
-- name: Check if ca.home is resolvable or not
+- name: Apply fallback IP if no hostnames resolved
   ansible.builtin.set_fact:
-    ca_host: "ca.home"
-  when: ca_home
+    ca_host: "{{ ca_fallback_ip }}"
+  when: ca_host is none
 
-- name: Set default ca
-  ansible.builtin.set_fact:
-    ca_host: "10.5.69.8"
-  when: ca_host is not defined
+- name: Verify CA host was set
+  ansible.builtin.assert:
+    that: ca_host is defined and ca_host != none
+    fail_msg: "Could not resolve a CA host and no fallback was successful."
 
 - name: Bootstrap CA Root Certificate 
   include_role: 
