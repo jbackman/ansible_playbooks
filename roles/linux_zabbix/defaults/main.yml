@@ -1,1 +1,4 @@
+---
 zabbix_version: "7.4"
+zabbix_primary_server: "10.5.69.5"
+zabbix_netbird_server: "100.96.250.215"

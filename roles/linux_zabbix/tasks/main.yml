@@ -1,28 +1,32 @@
 ---
-- name: Verify OS family
-  assert:
-    that:
-      - ansible_os_family == "Debian"
-    fail_msg: "This role only supports Debian-based distributions (Debian/Ubuntu)."
+- name: Check NetBird status for IP
+  # This command extracts just the IP address if it exists
+  shell: "netbird status | grep 'NetBird IP' | awk '{print $3}' | cut -d/ -f1"
+  register: netbird_ip
+  failed_when: false
+  changed_when: false
 
-- name: Download Zabbix repository package
-  get_url:
-    url: "https://repo.zabbix.com/zabbix/{{ zabbix_version }}/{{ ansible_distribution | lower }}/pool/main/z/zabbix-release/zabbix-release_latest+{{ ansible_distribution | lower }}{{ ansible_distribution_version }}_all.deb"
-    dest: "/tmp/zabbix-release.deb"
-    mode: '0644'
-
-- name: Install Zabbix repository
+- name: Install Zabbix Repository
   apt:
-    deb: "/tmp/zabbix-release.deb"
+    deb: "https://repo.zabbix.com/zabbix/{{ zabbix_version }}/{{ ansible_distribution | lower }}/pool/main/z/zabbix-release/zabbix-release_latest+{{ ansible_distribution | lower }}{{ ansible_distribution_version }}_all.deb"
     state: present
 
-- name: Update apt cache and install Zabbix Agent2
+- name: Install Zabbix Agent2
   apt:
     name: zabbix-agent2
     update_cache: yes
     state: present
 
-- name: Ensure Zabbix Agent2 service is running
+- name: Configure Zabbix Agent2 from template
+  template:
+    src: zabbix_agent2.conf.j2
+    dest: /etc/zabbix/zabbix_agent2.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Zabbix Agent2
+
+- name: Ensure Zabbix Agent2 is enabled and started
   service:
     name: zabbix-agent2
     state: started

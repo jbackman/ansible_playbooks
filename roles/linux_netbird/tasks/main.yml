@@ -1,0 +1,45 @@
+---
+- name: Ensure dependencies are installed
+  apt:
+    name: [apt-transport-https, ca-certificates, curl, gnupg]
+    state: present
+    update_cache: yes
+
+- name: Create directory for GPG keys
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Add NetBird GPG key
+  get_url:
+    url: https://pkgs.netbird.io/debian/public.key
+    dest: /etc/apt/keyrings/netbird.asc
+    mode: '0644'
+
+- name: Add NetBird repository
+  apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/netbird.asc] https://pkgs.netbird.io/debian stable main"
+    state: present
+    filename: netbird
+
+- name: Install NetBird
+  apt:
+    name: netbird
+    update_cache: yes
+    state: present
+
+- name: Check if NetBird is already connected
+  command: netbird status
+  register: netbird_status
+  failed_when: false
+  changed_when: false
+
+- name: Bring NetBird up
+  command: >
+    netbird up 
+    --management-url {{ netbird_management_url }} 
+    --setup-key {{ netbird_setup_key }}
+  when: "'Connected' not in netbird_status.stdout"
+  # This prevents the setup key from being logged in plain text
+  no_log: true

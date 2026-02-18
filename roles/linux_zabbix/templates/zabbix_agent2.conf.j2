@@ -1,0 +1,19 @@
+Hostname={{ inventory_hostname }}
+PidFile=/run/zabbix/zabbix_agent2.pid
+LogFile=/var/log/zabbix/zabbix_agent2.log
+LogFileSize=0
+
+{% if netbird_ip.stdout %}
+Server={{ zabbix_primary_server }},{{ zabbix_netbird_server }}
+ServerActive={{ zabbix_netbird_server }}
+ListenIP={{ netbird_ip.stdout }}
+{% else %}
+Server={{ zabbix_primary_server }}
+ServerActive={{ zabbix_primary_server }}
+ListenIP=0.0.0.0
+{% endif %}
+
+PluginSocket=/run/zabbix/agent.plugin.sock
+ControlSocket=/run/zabbix/agent.sock
+Include=/etc/zabbix/zabbix_agent2.d/plugins.d/*.conf
+Include=/etc/zabbix/zabbix_agent2.d/*.conf

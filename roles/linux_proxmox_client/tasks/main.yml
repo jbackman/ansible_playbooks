@@ -1,0 +1,52 @@
+---
+- name: Proxmox Backup Client Installation Block
+  block:
+    - name: Ensure dependencies are installed
+      apt:
+        name:
+          - gpg
+          - wget
+        state: present
+        update_cache: yes
+
+    - name: Create directory for GPG keys
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Download Proxmox GPG key
+      get_url:
+        url: "{{ pbs_gpg_key_url }}"
+        dest: /etc/apt/keyrings/proxmox-release-{{ ansible_distribution_release }}.gpg
+        mode: '0644'
+
+    - name: Add Proxmox Backup Client repository
+      apt_repository:
+        repo: "{{ pbs_repository_line }}"
+        state: present
+        filename: pbs-client
+        update_cache: yes
+
+    - name: Install proxmox-backup-client
+      apt:
+        name: proxmox-backup-client
+        state: present
+
+    - name: Create backup.sh script in /root
+      template:
+        src: backup.sh.j2
+        dest: /root/backup.sh
+        owner: root
+        group: root
+        mode: '0700'
+      # Prevents the password from leaking into Ansible logs
+      no_log: true
+
+  # This condition ensures the entire block is skipped on non-x86 hardware
+  when: ansible_architecture in ['x86_64', 'amd64', 'x86']
+
+- name: Notify if skipped due to architecture
+  debug:
+    msg: "Skipping Proxmox Backup Client installation: Architecture {{ ansible_architecture }} is not supported."
+  when: ansible_architecture not in ['x86_64', 'amd64', 'x86']
