@@ -1,8 +1,8 @@
 ---
 - name: Check if is resolvable or not
   ansible.builtin.set_fact:
-    via_netbird: ca.jitonline.local
-    via_home: ca.home
+    via_netbird: "ca.jitonline.local"
+    via_home: "ca.home"
 
 - name: Bootstrap CA Root Certificate vi Netbird
   include_role: 

@@ -8,4 +8,4 @@
        100.96.123.31   monitor.home
        100.127.134.38  semaphore.home
     dest: /etc/hosts
-    state: present
+    state: absent
