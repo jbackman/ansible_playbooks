@@ -1,15 +1,19 @@
 ---
+- name: Check if hosts ar resolvable or not
+  ansible.builtin.set_fact:
+    ca_jit: "{{ 'ca.jitonline.local' is ansible.utils.resolvable }}"
+    ca_home: "{{ 'ca.home' is ansible.utils.resolvable }}"
+  delegate_to: localhost
+
 - name: Check if ca.jitonline.net is resolvable or not
   ansible.builtin.set_fact:
     ca_host: "ca.jitonline.local"
-  when: 'ca.jitonline.net' is ansible.utils.resolvable
-  delegate_to: localhost
+  when: ca_jit
 
 - name: Check if ca.home is resolvable or not
   ansible.builtin.set_fact:
     ca_host: "ca.home"
-  when: 'ca.home' is ansible.utils.resolvable
-  delegate_to: localhost
+  when: ca_home
 
 - name: Set default ca
   ansible.builtin.set_fact:
