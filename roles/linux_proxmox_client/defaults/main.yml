@@ -13,3 +13,5 @@ pbs_server_local: "backup.home"
 
 backup_cron_command: "/root/backup.sh"
 backup_cron_job_name: "Run Backup randomly once a day"
+
+proxmox_arm_client: "https://github.com/wofferl/proxmox-backup-arm64/releases/download/4.1.2-1/proxmox-backup-client-static_4.1.2-1_arm64.deb"
