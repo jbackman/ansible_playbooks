@@ -1,6 +1,6 @@
 ---
 collections:
-  - name: artis3n.tailscale
+  - name: ansible.utils
   - name: community.general
   - name: community.docker
   - name: fortinet.fortios
