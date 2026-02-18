@@ -3,11 +3,18 @@
   ansible.builtin.set_fact:
     ca_host: "ca.jitonline.local"
   when: "{{ 'ca.jitonline.net' is ansible.utils.resolvable }}"
+  delegate_to: localhost
 
 - name: Check if ca.home is resolvable or not
   ansible.builtin.set_fact:
     ca_host: "ca.home"
   when: "{{ 'ca.home' is ansible.utils.resolvable }}"
+  delegate_to: localhost
+
+- name: Set default ca
+  ansible.builtin.set_fact:
+    ca_host: "10.5.69.8"
+  when: ca_host is not defined
 
 - name: Bootstrap CA Root Certificate 
   include_role: 
