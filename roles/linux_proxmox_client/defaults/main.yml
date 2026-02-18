@@ -10,3 +10,6 @@ proxmox_backup_password: "REPLACEME"
 pbs_fingerprint: "fd:e5:31:66:f8:dc:14:a7:41:b4:5f:d5:bf:00:7a:93:7c:29:eb:44:d9:27:89:d7:e8:d8:52:a3:90:b3:46:5c"
 pbs_server_netbird: "backup.jitonline.local"
 pbs_server_local: "backup.home"
+
+backup_cron_command: "/root/backup.sh"
+backup_cron_job_name: "Run Backup randomly once a day"
