@@ -37,10 +37,9 @@
   when: "'Connected' not in netbird_status.stdout"
   # This prevents the setup key from being logged in plain text
   no_log: true
-- name: Check if systemd-resolved is the active resolver
-  stat:
-    path: /etc/resolv.conf
-  register: resolv_stat
+
+- name: Populate service facts
+  service_facts:
 
 - name: Configure systemd-resolved
   block:
@@ -62,24 +61,17 @@
       lineinfile:
         path: /etc/systemd/resolved.conf
         regexp: '^#?Domains='
-        line: "Domains=jitonline.local home"
+        line: "Domains=jit-online.local home"
       notify: Restart systemd-resolved
 
-    - name: Ensure systemd-resolved is enabled and started
-      service:
-        name: systemd-resolved
-        state: started
-        enabled: yes
-
-  # Only run if /etc/resolv.conf is a symlink to systemd-resolved's stub
+  # This block only runs if the service is present and active
   when: 
-    - resolv_stat.stat.is_lnk is defined 
-    - resolv_stat.stat.is_lnk
-    - "'run/systemd/resolve' in resolv_stat.stat.lnk_source"
+    - "'systemd-resolved.service' in services"
+    - "services['systemd-resolved.service'].state == 'running'"
 
-- name: Report resolver status
+- name: Report service status
   debug:
-    msg: "Skipping configuration: /etc/resolv.conf is not managed by systemd-resolved."
+    msg: "systemd-resolved is not running or not installed. Skipping configuration."
   when: >
-    not resolv_stat.stat.is_lnk or 
-    'run/systemd/resolve' not in resolv_stat.stat.lnk_source
+    'systemd-resolved.service' not in services or 
+    services['systemd-resolved.service'].state != 'running'
