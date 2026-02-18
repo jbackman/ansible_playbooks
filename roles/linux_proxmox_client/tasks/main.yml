@@ -18,7 +18,7 @@
     - name: Download Proxmox GPG key
       get_url:
         url: "{{ pbs_gpg_key_url }}"
-        dest: /etc/apt/keyrings/proxmox-release-{{ ansible_distribution_release }}.gpg
+        dest: /usr/share/keyrings/proxmox-release-{{ ansible_distribution_release }}.gpg
         mode: '0644'
 
     - name: Add Proxmox Backup Client repository

@@ -5,21 +5,15 @@
     state: present
     update_cache: yes
 
-- name: Create directory for GPG keys
-  file:
-    path: /etc/apt/keyrings
-    state: directory
-    mode: '0755'
-
 - name: Add NetBird GPG key
   get_url:
     url: https://pkgs.netbird.io/debian/public.key
-    dest: /etc/apt/keyrings/netbird.asc
+    dest: /usr/share/keyrings/netbird.asc
     mode: '0644'
 
 - name: Add NetBird repository
   apt_repository:
-    repo: "deb [signed-by=/etc/apt/keyrings/netbird.asc] https://pkgs.netbird.io/debian stable main"
+    repo: "deb [signed-by=/usr/share/keyrings/netbird.asc] https://pkgs.netbird.io/debian stable main"
     state: present
     filename: netbird
 

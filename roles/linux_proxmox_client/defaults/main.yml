@@ -1,6 +1,6 @@
 ---
 # The repository to use. Options: pbs-no-subscription, pbs-enterprise
-pbs_repository_line: "deb http://download.proxmox.com/debian/pbs-client {{ ansible_distribution_release }} pbs-client-no-subscription"
+pbs_repository_line: "deb [signed-by=/usr/share/keyrings/release-{{ ansible_distribution_release }}.gpg] http://download.proxmox.com/debian/pbs-client {{ ansible_distribution_release }} pbs-client-no-subscription"
 
 # Key URL for Proxmox
 pbs_gpg_key_url: "https://enterprise.proxmox.com/debian/proxmox-release-{{ ansible_distribution_release }}.gpg"
