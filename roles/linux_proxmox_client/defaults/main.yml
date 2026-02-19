@@ -1,10 +1,10 @@
 ---
-# The repository to use. Options: pbs-no-subscription, pbs-enterprise
-pbs_repository_line: "deb [signed-by=/usr/share/keyrings/release-{{ ansible_distribution_release }}.gpg] http://download.proxmox.com/debian/pbs-client {{ ansible_distribution_release }} pbs-client-no-subscription"
-
 # Proxmox GPG Key
 pbs_gpg_key_url: "https://enterprise.proxmox.com/debian/proxmox-archive-keyring-trixie.gpg"
 pbs_gpg_key_dest: "/usr/share/keyrings/proxmox-archive-keyring.gpg"
+
+# The repository to use. Options: pbs-no-subscription, pbs-enterprise
+pbs_repository_line: "deb [signed-by={{ pbs_gpg_key_dest }} ] http://download.proxmox.com/debian/pbs-client trixe pbs-client-no-subscription"
 
 proxmox_backup_password: "REPLACEME"
 pbs_server_netbird: "backup.jitonline.local"
