@@ -1,43 +1,13 @@
 ---
 
-- name: Initialize ca_host as null
-  ansible.builtin.set_fact:
-    ca_host: null
-
-- name: Try to ping CA candidates
-  ansible.builtin.command: "ping -c 1 {{ item }}"
-  register: ping_result
-  ignore_errors: true
-  changed_when: false
-  loop: "{{ ca_check_list }}"
-  # Only run if we haven't found a working host yet
-  when: ca_host is none
-
-- name: Set ca_host based on successful ping
-  ansible.builtin.set_fact:
-    ca_host: "{{ item.item }}"
-  loop: "{{ ping_result.results }}"
-  when:
-    - ca_host is none
-    - item.rc == 0
-  no_log: true # Keeps the output clean
-
-- name: Fallback to default IP if no host responded
-  ansible.builtin.set_fact:
-    ca_host: "{{ ca_fallback_ip }}"
-  when: ca_host is none
-
-- name: Final Connectivity Check
-  ansible.builtin.debug:
-    msg: "Final CA candidate selected: {{ ca_host }}"
-
-- name: Bootstrap CA Root Certificate 
-  include_role: 
-    name: trfore.smallstep.step_ca_cert
-  vars:
-    step_ca_fingerprint: "70e19eaccd49e4e7bed26adce4b426be6facd82e98526aa38493b00cf29b86f4"
-    step_ca_url: "https://{{ ca_host }}"
-  ignore_errors: true
+- name: Transfer CA Certificate to server
+  ansible.builtin.copy:
+    src: HOME_PKI_Root_CA_274749243138288842360003561070822287839.crt
+    dest: /usr/local/share/ca-certificates
+    owner: root
+    group: root
+    mode: '0644'    # Standard read permissions
+    backup: yes     # Creates a timestamped backup if the file changes
 
 - name: Transfer Intermediate Certificate to server
   ansible.builtin.copy:
@@ -54,7 +24,7 @@
 
 - name: Update CA trust store (Debian/Ubuntu)
   ansible.builtin.command: update-ca-certificates
-  when: ansible_facts['os_family'] == "Debian"
+  when: ansible_facts['os_family'] == "Debian" or ansible_facts['os_family'] == "Ubuntu"
 
 - name: Update CA trust store (SUSE)
   ansible.builtin.command: update-ca-certificates
