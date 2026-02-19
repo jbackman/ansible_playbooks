@@ -3,7 +3,7 @@
 pbs_repository_line: "deb [signed-by=/usr/share/keyrings/release-{{ ansible_distribution_release }}.gpg] http://download.proxmox.com/debian/pbs-client {{ ansible_distribution_release }} pbs-client-no-subscription"
 
 # Proxmox GPG Key
-pbs_gpg_key_url: "https://enterprise.proxmox.com/debian/proxmox-release-{{ ansible_distribution_release }}.gpg"
+pbs_gpg_key_url: "https://enterprise.proxmox.com/debian/proxmox-release-trixe.gpg"
 pbs_gpg_key_dest: "/usr/share/keyrings/proxmox-archive-keyring.gpg"
 
 proxmox_backup_password: "REPLACEME"
