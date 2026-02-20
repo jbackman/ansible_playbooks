@@ -10,6 +10,7 @@
   when:
     - become_user is defined
     - not become_user
+  register: root_keys_update
 
 - name: Create authorized_keys remote_mgr (root)
   template:
@@ -19,6 +20,15 @@
   become: "{{ become_user | default(true) }}"
   tags:
     - always
+  register: remote_mgr_keys_update
+
+- name: Update Proxmox certs
+  ansible.builtin.command:
+    cmd: "pvecm updatecerts"
+  when:
+    - "'proxmox_server' in (host_tags | default([]))"
+    - (root_keys_update is changed) or (remote_mgr_keys_update is changed)
+  become: yes
 
 - name: Create authorized_keys non root
   template:
