@@ -9,14 +9,10 @@
     mode: '0644'    # Standard read permissions
     backup: yes     # Creates a timestamped backup if the file changes
 
-- name: Transfer Intermediate Certificate to server
-  ansible.builtin.copy:
-    src: HOME_PKI_INTERMEDIATE_CA_a15f3d75541864f90fb7a3dab065eba2.crt
-    dest: /usr/local/share/ca-certificates
-    owner: root
-    group: root
-    mode: '0644'    # Standard read permissions
-    backup: yes     # Creates a timestamped backup if the file changes
+- name: remove uneeded cert
+  ansible.builtin.file:
+    path: /usr/local/share/ca-certificates/HOME_PKI_INTERMEDIATE_CA_a15f3d75541864f90fb7a3dab065eba2.crt
+    state: absent
 
 - name: Update CA trust store (Red Hat/CentOS)
   ansible.builtin.command: update-ca-trust extract
