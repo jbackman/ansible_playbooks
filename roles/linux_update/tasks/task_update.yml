@@ -1,37 +1,58 @@
 ---
-- name: Update apt repo and cache on all Debian/Ubuntu boxes
-  ansible.builtin.apt: 
-    update_cache: yes 
-    force_apt_get: yes
-    cache_valid_time: 3600
-  become: "{{ become_user | default(true) }}"
-  tags:
-    - always
+- name: Update and Upgrade Packages
+  block:
+    - name: Update apt repo and cache (Debian/Ubuntu)
+      ansible.builtin.apt:
+        update_cache: yes
+        force_apt_get: yes
+        cache_valid_time: 3600
+        upgrade: dist
+      when: ansible_os_family == 'Debian'
 
-- name: Upgrade all packages on servers
-  ansible.builtin.apt:
-    upgrade: dist
-    force_apt_get: yes
-  become: "{{ become_user | default(true) }}"
-  tags:
-    - always
+    - name: Update packages (CentOS/RedHat)
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+      when: ansible_os_family == 'RedHat'
 
-- name: Check if a reboot is needed on all servers
-  register: reboot_required_file
-  ansible.builtin.stat: 
-    path: /var/run/reboot-required
-  tags:
-    - always
+    - name: Update packages (Alpine)
+      community.general.apk:
+        update_cache: yes
+        upgrade: yes
+      when: ansible_os_family == 'Alpine'
+  become: yes
 
-- name: Reboot the box if kernel updated
+- name: Check if Reboot is Required
+  block:
+    - name: Check if a reboot is needed (Debian/Ubuntu/Alpine)
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      register: reboot_required_file
+      loop:
+        - /var/run/reboot-required
+        - /run/reboot-required
+      when: ansible_os_family in ['Debian', 'Alpine']
+
+    - name: Check if a reboot is needed (CentOS/RedHat)
+      ansible.builtin.shell:
+        cmd: "needs-restarting -r"
+      check_mode: false
+      register: reboot_required_cmd
+      failed_when: false
+      changed_when: false
+      when: ansible_os_family == 'RedHat'
+  become: yes
+
+- name: Reboot if Required
   ansible.builtin.reboot:
-    msg: "Reboot initiated by Ansible for kernel updates"
+    msg: "Reboot initiated by Ansible for system updates"
     connect_timeout: 5
     reboot_timeout: 300
     pre_reboot_delay: 0
     post_reboot_delay: 30
     test_command: uptime
-  when: reboot_required_file.stat.exists
-  become: "{{ become_user | default(true) }}"
-  tags:
-    - always
+  when: >
+    (reboot_required_file is defined and reboot_required_file.results is defined and
+     reboot_required_file.results | selectattr('stat.exists', 'defined') | selectattr('stat.exists', 'equalto', true) | list | length > 0) or
+    (reboot_required_cmd is defined and reboot_required_cmd.rc | default(0) == 1)
+  become: yes
