@@ -1,6 +1,6 @@
 ---
 
-- hosts: all:!fortigate:!localhost
+- hosts: all:!fortigate:!localhost:!semaphore
   collections:
     - trfore.smallstep
   gather_facts: False
