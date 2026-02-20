@@ -1,9 +1,23 @@
 ---
 
-- hosts: debian,ubuntu,alpine
+- hosts: all:!fortigate:!localhost
   collections:
     - trfore.smallstep
-  gather_facts: True
+  gather_facts: False
+  pre_tasks:
+    - name: Install python3, sudo and shadow on Alpine
+      raw: |
+        if [ -x "$(command -v apk)" ]; then
+          if ! [ -x "$(command -v python3)" ] || ! [ -x "$(command -v sudo)" ] || ! [ -x "$(command -v useradd)" ]; then
+            apk update && apk add python3 sudo shadow
+          fi
+        fi
+      changed_when: false
+      # Note: This assumes you have the necessary privileges (e.g., connecting as root or having sudo/doas)
+    
+    - name: Gather facts
+      setup:
+
   roles:
     - role: linux_baseline
     - role: linux_update
