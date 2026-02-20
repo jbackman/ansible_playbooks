@@ -2,7 +2,6 @@
 
 - hosts: debian,ubuntu
   collections:
-    - artis3n.tailscale
     - trfore.smallstep
   gather_facts: True
   roles:
