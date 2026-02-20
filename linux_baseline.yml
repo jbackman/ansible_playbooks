@@ -34,4 +34,4 @@
     - role: linux_proxmox_client
       when: 
         - ansible_hostname != 'backup' 
-        - "'skip_proxmox' not in (host_tags | default([]))"
+        - "'skip_backup' not in (host_tags | default([]))"
