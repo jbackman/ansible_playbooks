@@ -19,7 +19,7 @@
 
 - name: Set syslog_host based on successful ping
   ansible.builtin.set_fact:
-    ca_host: "{{ item.item }}"
+    syslog_host: "{{ item.item }}"
   loop: "{{ ping_result.results }}"
   when:
     - syslog_host is none
