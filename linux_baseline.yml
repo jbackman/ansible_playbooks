@@ -8,7 +8,7 @@
     - role: linux_baseline
     - role: linux_update
     - role: linux_netbird
-      when: ansible_hostname not in ['kasm','netbird']
+      when: ansible_hostname not in ['kasm','netbird','vdi']
     - role: linux_system
     - role: linux_snmp
     - role: linux_zabbix
