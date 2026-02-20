@@ -22,10 +22,16 @@
     - role: linux_baseline
     - role: linux_update
     - role: linux_netbird
-      when: ansible_hostname not in ['kasm','netbird','vdi']
+      when: 
+        - ansible_hostname not in ['kasm','netbird','vdi']
+        - "'skip_netbird' not in (host_tags | default([]))"
     - role: linux_system
     - role: linux_snmp
     - role: linux_zabbix
-      when: ansible_hostname != 'zabbix' 
+      when: 
+        - ansible_hostname != 'zabbix' 
+        - "'skip_zabbix' not in (host_tags | default([]))"
     - role: linux_proxmox_client
-      when: ansible_hostname != 'backup' 
+      when: 
+        - ansible_hostname != 'backup' 
+        - "'skip_proxmox' not in (host_tags | default([]))"

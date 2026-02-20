@@ -8,6 +8,53 @@
     state: present
     update_cache: yes
 
+- name: Proxmox Backup Client Installation Block (Alpine)
+  block:
+    - name: Install extraction dependencies (Alpine)
+      community.general.apk:
+        name: [binutils, xz]
+        state: present
+        update_cache: yes
+
+    - name: Create temporary directory for extraction
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: pbs_extract
+      register: pbs_temp_dir
+
+    - name: Download Proxmox Backup Client static deb
+      ansible.builtin.get_url:
+        url: "{{ proxmox_alpine_static_deb }}"
+        dest: "{{ pbs_temp_dir.path }}/pbs-client.deb"
+
+    - name: Extract deb package
+      ansible.builtin.shell:
+        cmd: "ar x pbs-client.deb"
+        chdir: "{{ pbs_temp_dir.path }}"
+      changed_when: false
+
+    - name: Extract data.tar
+      ansible.builtin.shell:
+        cmd: "tar -xJf data.tar.xz"
+        chdir: "{{ pbs_temp_dir.path }}"
+      changed_when: false
+
+    - name: Install static binary
+      ansible.builtin.copy:
+        src: "{{ pbs_temp_dir.path }}/usr/bin/proxmox-backup-client"
+        dest: /usr//bin/proxmox-backup-client
+        mode: '0755'
+        remote_src: yes
+
+    - name: Cleanup temporary directory
+      ansible.builtin.file:
+        path: "{{ pbs_temp_dir.path }}"
+        state: absent
+  when: 
+    - ansible_os_family == 'Alpine'
+    - ansible_architecture in ['x86_64', 'amd64', 'x86']
+  become: yes
+
 - name: Proxmox Backup Client Installation Block (Debian/Ubuntu)
   block:
     - name: Create directory for GPG keys
@@ -65,6 +112,7 @@
   when: 
     - ansible_architecture in ['x86_64', 'amd64', 'x86']
     - ansible_os_family == 'Debian'
+  become: yes
 
 - name: Install the arm package directly (Debian/Ubuntu)
   ansible.builtin.apt:
@@ -72,6 +120,7 @@
   when: 
     - ansible_architecture in ['arm64', 'aarch64']
     - ansible_os_family == 'Debian'
+  become: yes
 
 - name: Initialize pbs_host as null
   ansible.builtin.set_fact:
@@ -110,18 +159,21 @@
     backup: yes
   # Prevents the password from leaking into Ansible logs
   no_log: true
+  become: yes
 
 - name: Ensure cron package is installed
   ansible.builtin.package:
     name: "{{ 'dcron' if ansible_os_family == 'Alpine' else 'cron' }}"
     state: present
     update_cache: yes
+  become: yes
 
 - name: Ensure cron service is started and enabled
   ansible.builtin.service:
     name: "{{ 'crond' if ansible_os_family == 'Alpine' else 'cron' }}"
     state: started
     enabled: yes
+  become: yes
 
 - name: Set random hour and minute for the cron job
   set_fact:
@@ -136,6 +188,7 @@
     job: "{{ backup_cron_command }}"
     user: root
     state: present
+  become: yes
 
 - name: Inform which time was selected
   debug:

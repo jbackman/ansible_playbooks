@@ -22,6 +22,29 @@
       when: ansible_os_family == 'Alpine'
   become: yes
 
+- name: Update Docker Compose applications
+  block:
+    - name: Check for docker-compose.yml in /srv
+      ansible.builtin.stat:
+        path: /srv/docker-compose.yml
+      register: docker_compose_file
+
+    - name: Pull and restart Docker Compose services
+      block:
+        - name: Pull latest images
+          ansible.builtin.command:
+            cmd: "docker compose pull"
+            chdir: /srv
+          changed_when: true
+
+        - name: Restart services
+          ansible.builtin.command:
+            cmd: "docker compose restart"
+            chdir: /srv
+          changed_when: true
+      when: docker_compose_file.stat.exists
+  become: yes
+
 - name: Check if Reboot is Required
   block:
     - name: Check if a reboot is needed (Debian/Ubuntu/Alpine)

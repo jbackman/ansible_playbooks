@@ -1,4 +1,5 @@
 #!/bin/sh
 export PBS_PASSWORD="{{ proxmox_backup_password }}"
+export PBS_FINGERPRINT="{{ pbs_fingerprint }}"
 
 /usr/bin/proxmox-backup-client backup backup.pxar:/srv --repository backup@pbs@{{ pbs_host }}:NFS

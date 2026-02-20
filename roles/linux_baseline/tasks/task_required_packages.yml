@@ -18,10 +18,12 @@
   community.general.apk:
     name: 
       - "bash"
+      - "ca-certificates"
       - "python3"
       - "py3-pip"
       - "py3-setuptools"
       - "rsyslog"
+      - "rsyslog-openrc"
       - "shadow"
       - "sudo"
       - "tcpdump"
@@ -52,3 +54,4 @@
 - name: Install the latest version of step CLI
   ansible.builtin.include_role:
     name: smallstep.cli.install
+  when: ansible_os_family != 'Alpine'

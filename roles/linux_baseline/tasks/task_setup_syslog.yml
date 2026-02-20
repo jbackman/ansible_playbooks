@@ -69,7 +69,7 @@
 
 - name: Stop and disable default syslogd (Alpine)
   ansible.builtin.service:
-    name: syslogd
+    name: syslog
     state: stopped
     enabled: false
   become: yes

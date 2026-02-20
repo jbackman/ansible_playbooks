@@ -27,7 +27,9 @@
 
 - name: Install Zabbix Agent2 (Alpine)
   community.general.apk:
-    name: zabbix-agent2
+    name: 
+      - zabbix-agent2
+      - zabbix-agent2-openrc
     update_cache: yes
     state: present
   when: ansible_os_family == 'Alpine'
