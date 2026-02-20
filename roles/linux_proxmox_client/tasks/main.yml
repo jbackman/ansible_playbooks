@@ -67,6 +67,33 @@
     deb: "{{ proxmox_arm_client }}"
   when: ansible_architecture in ['arm64', 'aarch64']
 
+- name: Initialize pbs_host as null
+  ansible.builtin.set_fact:
+    pbs_host: null
+
+- name: Try to ping pbs candidates
+  ansible.builtin.command: "ping -c 1 {{ item }}"
+  register: ping_result
+  ignore_errors: true
+  changed_when: false
+  loop: "{{ pbs_check_list }}"
+  # Only run if we haven't found a working host yet
+  when: pbs_host is none
+
+- name: Set pbs_host based on successful ping
+  ansible.builtin.set_fact:
+    pbs_host: "{{ item.item }}"
+  loop: "{{ ping_result.results }}"
+  when:
+    - pbs_host is none
+    - item.rc == 0
+  no_log: true # Keeps the output clean
+
+- name: Fallback to default IP if no host responded
+  ansible.builtin.set_fact:
+    pbs_host: "{{ pbs_fallback_ip }}"
+  when: pbs_host is none
+
 - name: Create backup.sh script in /root
   template:
     src: backup.sh.j2
@@ -74,6 +101,7 @@
     owner: root
     group: root
     mode: '0700'
+    backup: yes
   # Prevents the password from leaking into Ansible logs
   no_log: true
 

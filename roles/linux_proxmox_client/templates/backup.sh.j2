@@ -1,8 +1,4 @@
 #!/bin/sh
 export PBS_PASSWORD="{{ proxmox_backup_password }}"
 
-{% if netbird_ip.stdout %}
-/usr/bin/proxmox-backup-client backup backup.pxar:/srv --repository backup@pbs@{{ pbs_server_netbird }}:NFS
-{% else %}
-/usr/bin/proxmox-backup-client backup backup.pxar:/srv --repository backup@pbs@{{ pbs_server_local }}:NFS
-{% endif %}
+/usr/bin/proxmox-backup-client backup backup.pxar:/srv --repository backup@pbs@{{ pbs_host }}:NFS
