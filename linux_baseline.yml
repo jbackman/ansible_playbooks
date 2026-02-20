@@ -1,17 +1,37 @@
 ---
 
-- hosts: debian,ubuntu
+- hosts: all:!fortigate:!localhost
   collections:
     - trfore.smallstep
-  gather_facts: True
+  gather_facts: False
+  pre_tasks:
+    - name: Install python3, sudo and shadow on Alpine
+      raw: |
+        if [ -x "$(command -v apk)" ]; then
+          if ! [ -x "$(command -v python3)" ] || ! [ -x "$(command -v sudo)" ] || ! [ -x "$(command -v useradd)" ]; then
+            apk update && apk add python3 sudo shadow
+          fi
+        fi
+      changed_when: false
+      # Note: This assumes you have the necessary privileges (e.g., connecting as root or having sudo/doas)
+    
+    - name: Gather facts
+      setup:
+
   roles:
     - role: linux_baseline
     - role: linux_update
     - role: linux_netbird
-      when: ansible_hostname not in ['kasm','netbird','vdi']
+      when: 
+        - ansible_hostname not in ['kasm','netbird','vdi']
+        - "'skip_netbird' not in (host_tags | default([]))"
     - role: linux_system
     - role: linux_snmp
     - role: linux_zabbix
-      when: ansible_hostname != 'zabbix' 
+      when: 
+        - ansible_hostname != 'zabbix' 
+        - "'skip_zabbix' not in (host_tags | default([]))"
     - role: linux_proxmox_client
-      when: ansible_hostname != 'backup' 
+      when: 
+        - ansible_hostname != 'backup' 
+        - "'skip_proxmox' not in (host_tags | default([]))"

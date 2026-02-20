@@ -1,6 +1,18 @@
 ---
 - name: Update all Linux servers
-  hosts: debian, ubuntu, centos, alpine
-  gather_facts: yes
+  hosts: all:!fortigate:!localhost
+  gather_facts: no
+  pre_tasks:
+    - name: Install python3, sudo and shadow on Alpine
+      raw: |
+        if [ -x "$(command -v apk)" ]; then
+          if ! [ -x "$(command -v python3)" ] || ! [ -x "$(command -v sudo)" ] || ! [ -x "$(command -v useradd)" ]; then
+            apk update && apk add python3 sudo shadow
+          fi
+        fi
+      changed_when: false
+
+    - name: Gather facts
+      setup:
   roles:
     - role: linux_update

@@ -32,6 +32,15 @@
     syslog_host: "{{ syslog_fallback_ip }}"
   when: syslog_host is none
 
+- name: Ensure rsyslog.d directory exists
+  ansible.builtin.file:
+    path: /etc/rsyslog.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: yes
+
 - name: Configure rsyslog
   ansible.builtin.template:
     src: remote.conf.j2
@@ -48,3 +57,21 @@
     state: started
     enabled: true
   become: yes
+
+- name: Ensure rsyslog.conf includes rsyslog.d directory
+  ansible.builtin.lineinfile:
+    path: /etc/rsyslog.conf
+    line: '$IncludeConfig /etc/rsyslog.d/*.conf'
+    insertbefore: BOF
+    state: present
+  become: yes
+  notify: Restart rsyslog
+
+- name: Stop and disable default syslogd (Alpine)
+  ansible.builtin.service:
+    name: syslog
+    state: stopped
+    enabled: false
+  become: yes
+  when: ansible_os_family == 'Alpine'
+  failed_when: false # Busybox syslog might not be running or present as a service name in all variants

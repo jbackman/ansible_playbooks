@@ -1,10 +1,16 @@
 ---
 - name: Set CA certificate destination path
   ansible.builtin.set_fact:
-    ca_cert_dest: >-
-      {% if ansible_os_family == 'RedHat' %}/etc/pki/ca-trust/source/anchors/
-      {% else %}/usr/local/share/ca-certificates/
-      {% endif %}
+    ca_cert_dest: "{{ '/etc/pki/ca-trust/source/anchors/' if ansible_os_family == 'RedHat' else '/usr/local/share/ca-certificates/' }}"
+
+- name: Ensure CA certificate destination directory exists
+  ansible.builtin.file:
+    path: "{{ ca_cert_dest }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: yes
 
 - name: Transfer CA Certificate to server
   ansible.builtin.copy:

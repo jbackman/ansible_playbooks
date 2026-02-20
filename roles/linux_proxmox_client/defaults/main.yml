@@ -12,8 +12,9 @@ pbs_check_list:
   - "backup.home"
 
 pbs_fallback_ip: 10.5.69.11
-
+pbs_fingerprint: "96:93:99:ce:b1:74:85:b8:41:46:f5:8b:6d:3f:d3:e3:be:a0:4d:81:03:26:d5:8e:20:f5:ee:9f:16:2f:b5:58"
 backup_cron_command: "/root/backup.sh"
 backup_cron_job_name: "Run Backup randomly once a day"
 
 proxmox_arm_client: "https://github.com/wofferl/proxmox-backup-arm64/releases/download/4.1.2-1/proxmox-backup-client-static_4.1.2-1_arm64.deb"
+proxmox_alpine_static_deb: "http://download.proxmox.com/debian/pbs-client/dists/trixie/main/binary-amd64/proxmox-backup-client-static_4.1.1-1_amd64.deb"

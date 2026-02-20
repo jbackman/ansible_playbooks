@@ -17,10 +17,14 @@
 - name: Install required packages (Alpine)
   community.general.apk:
     name: 
+      - "bash"
+      - "ca-certificates"
       - "python3"
-      - "python3-pip"
-      - "python3-setuptools"
+      - "py3-pip"
+      - "py3-setuptools"
       - "rsyslog"
+      - "rsyslog-openrc"
+      - "shadow"
       - "sudo"
       - "tcpdump"
       - "vim"
@@ -50,3 +54,4 @@
 - name: Install the latest version of step CLI
   ansible.builtin.include_role:
     name: smallstep.cli.install
+  when: ansible_os_family != 'Alpine'

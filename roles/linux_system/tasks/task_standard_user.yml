@@ -1,8 +1,12 @@
 ---
+- name: Set sudo group fact
+  ansible.builtin.set_fact:
+    sudo_group: "{{ 'wheel' if ansible_os_family == 'Alpine' else 'sudo' }}"
+
 - name: Ensure standard user exists
   ansible.builtin.user:
     name: remote_mgr
-    groups: sudo, users
+    groups: "{{ sudo_group }}, users"
     uid: 5003
     shell: /bin/bash
     generate_ssh_key: yes

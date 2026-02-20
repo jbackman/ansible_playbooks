@@ -1,27 +1,84 @@
 ---
-- name: Ensure dependencies are installed
+- name: Ensure dependencies are installed (Debian/Ubuntu)
   apt:
     name: [apt-transport-https, ca-certificates, curl, gnupg]
     state: present
     update_cache: yes
+  when: ansible_os_family == 'Debian'
 
-- name: Add NetBird GPG key
+- name: Ensure dependencies are installed (Alpine)
+  community.general.apk:
+    name: [ca-certificates, curl]
+    state: present
+    update_cache: yes
+  when: ansible_os_family == 'Alpine'
+  become: yes
+
+- name: Add NetBird GPG key (Debian)
   get_url:
     url: https://pkgs.netbird.io/debian/public.key
     dest: /usr/share/keyrings/netbird.asc
     mode: '0644'
+  when: ansible_os_family == 'Debian'
 
-- name: Add NetBird repository
+- name: Add NetBird repository (Debian)
   apt_repository:
     repo: "deb [signed-by=/usr/share/keyrings/netbird.asc] https://pkgs.netbird.io/debian stable main"
     state: present
     filename: netbird
+  when: ansible_os_family == 'Debian'
 
-- name: Install NetBird
+- name: Install NetBird (Debian)
   apt:
     name: netbird
     update_cache: yes
     state: present
+  when: ansible_os_family == 'Debian'
+
+- name: Update Alpine Linux repositories to v3.23 (if version < 3.23)
+  ansible.builtin.replace:
+    path: /etc/apk/repositories
+    regexp: 'v\d+\.\d+'
+    replace: 'v3.23'
+  when: 
+    - ansible_os_family == 'Alpine'
+    - ansible_distribution_version is version('3.23', '<')
+  become: yes
+
+- name: Update Alpine Linux (if version < 3.23)
+  community.general.apk:
+    update_cache: yes
+    upgrade: yes
+  when: 
+    - ansible_os_family == 'Alpine'
+    - ansible_distribution_version is version('3.23', '<')
+  become: yes
+  register: alpine_upgrade_result
+
+- name: Refresh facts after Alpine upgrade
+  ansible.builtin.setup:
+  when: 
+    - alpine_upgrade_result is changed
+  become: yes
+
+- name: Install NetBird (Alpine >= 3.23)
+  community.general.apk:
+    name: netbird
+    state: present
+    update_cache: yes
+  when: 
+    - ansible_os_family == 'Alpine'
+    - ansible_distribution_version is version('3.23', '>=')
+  become: yes
+
+- name: Install NetBird (Alpine < 3.23)
+  ansible.builtin.shell:
+    cmd: "curl -fsSL https://pkgs.netbird.io/install.sh | sh"
+    creates: /usr/bin/netbird
+  when: 
+    - ansible_os_family == 'Alpine'
+    - ansible_distribution_version is version('3.23', '<')
+  become: yes
 
 - name: Check if NetBird is already connected
   command: netbird status
@@ -37,6 +94,14 @@
   when: "'Connected' not in netbird_status.stdout"
   # This prevents the setup key from being logged in plain text
   no_log: true
+
+- name: Ensure Netbird is started (Alpine)
+  ansible.builtin.service:
+    name: netbird
+    state: started
+    enabled: yes
+  when: ansible_os_family == 'Alpine'
+  become: yes
 
 - name: Populate service facts
   service_facts:

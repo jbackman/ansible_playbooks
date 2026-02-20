@@ -1,6 +1,6 @@
 ---
 - name: Add required packages for snmpd
-  apt:
+  ansible.builtin.package:
     name: 
       - snmpd
     state: latest
