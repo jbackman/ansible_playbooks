@@ -1,5 +1,5 @@
 ---
-- name: set up host alias
+- name: Set up host alias
   ansible.builtin.blockinfile:
     block: |
        10.5.69.8   ca.home
@@ -9,3 +9,4 @@
        10.5.69.11  backup.home
     dest: /etc/hosts
     state: present
+  become: yes

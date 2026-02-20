@@ -1,31 +1,25 @@
 ---
+- name: Set CA certificate destination path
+  ansible.builtin.set_fact:
+    ca_cert_dest: >-
+      {% if ansible_os_family == 'RedHat' %}/etc/pki/ca-trust/source/anchors/
+      {% else %}/usr/local/share/ca-certificates/
+      {% endif %}
 
 - name: Transfer CA Certificate to server
   ansible.builtin.copy:
     src: HOME_PKI_Root_CA_274749243138288842360003561070822287839.crt
-    dest: /usr/local/share/ca-certificates
+    dest: "{{ ca_cert_dest }}"
     owner: root
     group: root
-    mode: '0644'    # Standard read permissions
-    backup: yes     # Creates a timestamped backup if the file changes
+    mode: '0644'
+    backup: yes
+  notify: "update ca trust"
+  become: yes
 
-- name: remove uneeded cert
+- name: Remove unneeded cert
   ansible.builtin.file:
-    path: /usr/local/share/ca-certificates/HOME_PKI_INTERMEDIATE_CA_a15f3d75541864f90fb7a3dab065eba2.crt
+    path: "{{ ca_cert_dest }}/HOME_PKI_INTERMEDIATE_CA_a15f3d75541864f90fb7a3dab065eba2.crt"
     state: absent
-
-- name: Update CA trust store (Red Hat/CentOS)
-  ansible.builtin.command: update-ca-trust extract
-  when: ansible_facts['os_family'] == "RedHat"
-
-- name: Update CA trust store (Debian/Ubuntu)
-  ansible.builtin.command: update-ca-certificates
-  when: ansible_facts['os_family'] == "Debian" or ansible_facts['os_family'] == "Ubuntu"
-
-- name: Update CA trust store (SUSE)
-  ansible.builtin.command: update-ca-certificates
-  when: ansible_facts['os_family'] == "Suse"
-
-- name: Update CA trust store (Alpine)
-  ansible.builtin.command: update-ca-certificates
-  when: ansible_facts['os_family'] == "Alpine"
+  notify: "update ca trust"
+  become: yes

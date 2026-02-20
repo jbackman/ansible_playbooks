@@ -1,17 +1,12 @@
 ---
-- name: Set become
-  set_fact:
-    become_user: false
-  when:
-    - ansible_user == 'root'
 - name: Set hosts
-  include_tasks: task_set_hosts.yml
+  ansible.builtin.include_tasks: task_set_hosts.yml
 
 - name: Include task to install required packages
-  include_tasks: task_required_packages.yml
+  ansible.builtin.include_tasks: task_required_packages.yml
 
 - name: Set CA certificate
-  include_tasks: task_add_ca_certs.yml
+  ansible.builtin.include_tasks: task_add_ca_certs.yml
 
 - name: Setup Syslog
-  include_tasks: task_setup_syslog.yml
+  ansible.builtin.include_tasks: task_setup_syslog.yml

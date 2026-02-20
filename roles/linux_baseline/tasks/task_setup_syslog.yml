@@ -3,6 +3,7 @@
   ansible.builtin.package:
     name: rsyslog
     state: present
+  become: yes
 
 - name: Initialize syslog_host as null
   ansible.builtin.set_fact:
@@ -14,7 +15,6 @@
   ignore_errors: true
   changed_when: false
   loop: "{{ syslog_check_list }}"
-  # Only run if we haven't found a working host yet
   when: syslog_host is none
 
 - name: Set syslog_host based on successful ping
@@ -23,25 +23,23 @@
   loop: "{{ ping_result.results }}"
   when:
     - syslog_host is none
+    - item.rc is defined
     - item.rc == 0
-  no_log: true # Keeps the output clean
+  no_log: true
 
 - name: Fallback to default IP if no host responded
   ansible.builtin.set_fact:
     syslog_host: "{{ syslog_fallback_ip }}"
   when: syslog_host is none
 
-- name: Final Connectivity Check
-  ansible.builtin.debug:
-    msg: "Final Syslog candidate selected: {{ syslog_host }}"
-
-- name: Configure rsyslog (optional - example for client-side forwarding)
+- name: Configure rsyslog
   ansible.builtin.template:
-    src: templates/remote.conf.j2 # Path to your rsyslog template
+    src: remote.conf.j2
     dest: /etc/rsyslog.d/10-remote.conf
     owner: root
     group: root
     mode: '0644'
+  become: yes
   notify: Restart rsyslog
 
 - name: Ensure rsyslog service is running and enabled
@@ -49,3 +47,4 @@
     name: rsyslog
     state: started
     enabled: true
+  become: yes
