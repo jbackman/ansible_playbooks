@@ -1,6 +1,6 @@
 ---
 
-- hosts: debian,ubuntu
+- hosts: debian,ubuntu,alpine
   collections:
     - trfore.smallstep
   gather_facts: True

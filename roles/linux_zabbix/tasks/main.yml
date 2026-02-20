@@ -18,11 +18,19 @@
     state: present
   when: ansible_distribution == 'Ubuntu'
 
-- name: Install Zabbix Agent2
+- name: Install Zabbix Agent2 (Debian/Ubuntu)
   apt:
     name: zabbix-agent2
     update_cache: yes
     state: present
+  when: ansible_os_family == 'Debian'
+
+- name: Install Zabbix Agent2 (Alpine)
+  community.general.apk:
+    name: zabbix-agent2
+    update_cache: yes
+    state: present
+  when: ansible_os_family == 'Alpine'
 
 - name: Configure Zabbix Agent2 from template
   template:

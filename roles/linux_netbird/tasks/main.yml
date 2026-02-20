@@ -1,27 +1,44 @@
 ---
-- name: Ensure dependencies are installed
+- name: Ensure dependencies are installed (Debian/Ubuntu)
   apt:
     name: [apt-transport-https, ca-certificates, curl, gnupg]
     state: present
     update_cache: yes
+  when: ansible_os_family == 'Debian'
 
-- name: Add NetBird GPG key
+- name: Ensure dependencies are installed (Alpine)
+  community.general.apk:
+    name: [ca-certificates, curl]
+    state: present
+    update_cache: yes
+  when: ansible_os_family == 'Alpine'
+
+- name: Add NetBird GPG key (Debian)
   get_url:
     url: https://pkgs.netbird.io/debian/public.key
     dest: /usr/share/keyrings/netbird.asc
     mode: '0644'
+  when: ansible_os_family == 'Debian'
 
-- name: Add NetBird repository
+- name: Add NetBird repository (Debian)
   apt_repository:
     repo: "deb [signed-by=/usr/share/keyrings/netbird.asc] https://pkgs.netbird.io/debian stable main"
     state: present
     filename: netbird
+  when: ansible_os_family == 'Debian'
 
-- name: Install NetBird
+- name: Install NetBird (Debian)
   apt:
     name: netbird
     update_cache: yes
     state: present
+  when: ansible_os_family == 'Debian'
+
+- name: Install NetBird (Alpine)
+  ansible.builtin.shell:
+    cmd: "curl -fsSL https://pkgs.netbird.io/install.sh | sh"
+    creates: /usr/bin/netbird
+  when: ansible_os_family == 'Alpine'
 
 - name: Check if NetBird is already connected
   command: netbird status
@@ -37,6 +54,14 @@
   when: "'Connected' not in netbird_status.stdout"
   # This prevents the setup key from being logged in plain text
   no_log: true
+
+- name: Ensure Netbird is started (Alpine)
+  ansible.builtin.service:
+    name: netbird
+    state: started
+    enabled: yes
+  when: ansible_os_family == 'Alpine'
+  become: yes
 
 - name: Populate service facts
   service_facts:
