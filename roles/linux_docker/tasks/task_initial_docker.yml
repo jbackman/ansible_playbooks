@@ -47,6 +47,8 @@
       - docker-ce-cli
       - containerd.io
       - docker-compose-plugin
+      - python3-docker
+      - python3-docker-compose
     state: latest
     update_cache: yes
   become: "{{ become_user | default(true) }}"
@@ -57,6 +59,7 @@
     name: 
       - docker
       - py3-pip
+      - py3-docker
       - docker-compose
     state: latest
     update_cache: yes
@@ -69,6 +72,7 @@
       - docker
       - docker-compose
   become: "{{ become_user | default(true) }}"
+  when: ansible_os_family != 'Alpine'
 
 - name: Ensure Docker service is started and enabled
   ansible.builtin.service:

@@ -1,0 +1,26 @@
+---
+
+- name: Check if the ansible-venv exists
+  ansible.builtin.stat:
+    path: /opt/ansible-venv/bin/python
+  register: ansible_venv_stat
+
+- name: Create ansible-venv if it doesn't exist
+  become: yes
+  ansible.builtin.raw: |
+    if [ ! -d "/opt/ansible-venv" ]; then
+      if [ -x "$(command -v apk)" ]; then
+        apk update && apk add python3 sudo shadow py3-pip pipx
+      elif [ -x "$(command -v apt-get)" ]; then
+        apt-get update && apt-get install -y python3-venv python3-pip pipx sudo
+      fi
+      python3 -m venv /opt/ansible-venv
+      /opt/ansible-venv/bin/pip install --upgrade pip
+      /opt/ansible-venv/bin/pip install docker docker-compose requests
+    fi
+  when: not ansible_venv_stat.stat.exists
+  changed_when: true
+
+- name: Set ansible_python_interpreter for the remainder of the play
+  ansible.builtin.set_fact:
+    ansible_python_interpreter: /opt/ansible-venv/bin/python

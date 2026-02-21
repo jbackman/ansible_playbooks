@@ -5,16 +5,9 @@
     - trfore.smallstep
   gather_facts: False
   pre_tasks:
-    - name: Install python3, sudo and shadow on Alpine
-      raw: |
-        if [ -x "$(command -v apk)" ]; then
-          if ! [ -x "$(command -v python3)" ] || ! [ -x "$(command -v sudo)" ] || ! [ -x "$(command -v useradd)" ]; then
-            apk update && apk add python3 sudo shadow
-          fi
-        fi
-      changed_when: false
-      # Note: This assumes you have the necessary privileges (e.g., connecting as root or having sudo/doas)
-    
+    - name: Ensure the ansible-venv exists and is used
+      ansible.builtin.include_tasks: tasks/ensure_ansible_venv.yml
+
     - name: Gather facts
       setup:
 
