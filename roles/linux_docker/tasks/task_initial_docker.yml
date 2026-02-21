@@ -1,53 +1,76 @@
 ---
 
-- name: Add required packages for docker
-  apt:
+- name: Add required packages for docker (Debian family)
+  ansible.builtin.apt:
     name: 
       - apt-transport-https
       - ca-certificates
       - curl
       - software-properties-common
+      - python3-pip
     state: latest
   become: "{{ become_user | default(true) }}"
+  when: ansible_os_family == 'Debian'
 
 - name: Add Ubuntu GPG key for docker
-  apt_key:
+  ansible.builtin.apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present 
   become: "{{ become_user | default(true) }}"
   when: ansible_distribution == 'Ubuntu'
 
 - name: Add Ubuntu docker repository
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
     state: present
   become: "{{ become_user | default(true) }}"
   when: ansible_distribution == 'Ubuntu'
 
 - name: Add Debian GPG key for docker
-  apt_key:
+  ansible.builtin.apt_key:
     url: https://download.docker.com/linux/debian/gpg
     state: present 
   become: "{{ become_user | default(true) }}"
   when: ansible_distribution == 'Debian'
 
 - name: Add Debian docker repository
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
     state: present
   become: "{{ become_user | default(true) }}"
   when: ansible_distribution == 'Debian'
 
-- name: Add docker package
-  apt:
+- name: Add docker package (Debian family)
+  ansible.builtin.apt:
     name: 
       - docker-ce
+      - docker-ce-cli
+      - containerd.io
     state: latest
+    update_cache: yes
   become: "{{ become_user | default(true) }}"
+  when: ansible_os_family == 'Debian'
 
-- name: Install python modules for managing docker
-  pip:
+- name: Add docker package (Alpine)
+  community.general.apk:
     name: 
       - docker
+      - py3-pip
+    state: latest
+    update_cache: yes
+  become: "{{ become_user | default(true) }}"
+  when: ansible_os_family == 'Alpine'
+
+- name: Install python modules for managing docker
+  ansible.builtin.pip:
+    name: 
+      - docker
+  become: "{{ become_user | default(true) }}"
+
+- name: Ensure Docker service is started and enabled
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: yes
   become: "{{ become_user | default(true) }}"
 

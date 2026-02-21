@@ -1,42 +1,36 @@
 ---
 
-#- name: Ensure Latest Docker
-#  apt:
-#    name: 
-#      - docker-ce
-#    state: latest
-#  become: "{{ become_user | default(true) }}"
-  
 - name: Clean up
-  docker_prune:
+  community.docker.docker_prune:
     containers: yes
     images: yes
     builder_cache: yes
+  become: "{{ become_user | default(true) }}"
     
 - name: Create a Docker Network
-  docker_network:
+  community.docker.docker_network:
     name: "{{ item.name }}"
     ipam_config: "{{ item.ipam_config }}"
-  loop: "{{ docker_networks }}"
+  loop: "{{ docker_networks | default([]) }}"
+  become: "{{ become_user | default(true) }}"
 
 - name: Set source dirs
-  set_fact:
-    source_dirs: "{{lookup('subelements', docker_containers, 'volumes', {'skip_missing': True}) | list }}"
-    #source_dirs: "{{lookup('subelements', docker_containers, 'volumes', {'skip_missing': True, 'wantlist': True}) |list }}"
+  ansible.builtin.set_fact:
+    source_dirs: "{{ lookup('ansible.builtin.subelements', docker_containers | default([]), 'volumes', {'skip_missing': True}) | list }}"
 
 - name: Make sure source dir exists
-  file: 
+  ansible.builtin.file: 
     state: directory
     path: "{{ item.1 | regex_replace(':.*','') }}"
     mode: 0755
-  loop: 
-  - "{{ source_dirs }}"
+  loop: "{{ source_dirs }}"
   when: 
     - item.0.tag in group_names
   ignore_errors: yes
+  become: "{{ become_user | default(true) }}"
 
 - name: Deploy Docker Containers
-  docker_container:
+  community.docker.docker_container:
     name: "{{ item.name }}"
     image: "{{ item.image }}"
     command: "{{ item.command | default('') }}"
@@ -47,13 +41,14 @@
     ports: "{{ item.ports }}"
     networks: "{{ item.networks }}"
     capabilities: "{{ item.capabilities | default([]) }}"
-  loop: "{{ docker_containers }}"
+  loop: "{{ docker_containers | default([]) }}"
   when: 
     - item.tag in group_names
     - item.networks is defined
+  become: "{{ become_user | default(true) }}"
 
 - name: Deploy Docker Containers without networks
-  docker_container:
+  community.docker.docker_container:
     name: "{{ item.name }}"
     image: "{{ item.image }}"
     command: "{{ item.command | default('') }}"
@@ -64,8 +59,9 @@
     ports: "{{ item.ports |default(omit)}}"
     capabilities: "{{ item.capabilities | default(omit) }}"
     volumes: "{{ item.volumes | default([])}}"
-  loop: "{{ docker_containers }}"
+  loop: "{{ docker_containers | default([]) }}"
   when: 
     - item.tag in group_names
     - item.networks is not defined
+  become: "{{ become_user | default(true) }}"
 
