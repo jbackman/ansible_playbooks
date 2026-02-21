@@ -46,6 +46,7 @@
       - docker-ce
       - docker-ce-cli
       - containerd.io
+      - docker-compose-plugin
     state: latest
     update_cache: yes
   become: "{{ become_user | default(true) }}"
@@ -56,6 +57,7 @@
     name: 
       - docker
       - py3-pip
+      - docker-compose
     state: latest
     update_cache: yes
   become: "{{ become_user | default(true) }}"
@@ -65,6 +67,7 @@
   ansible.builtin.pip:
     name: 
       - docker
+      - docker-compose
   become: "{{ become_user | default(true) }}"
 
 - name: Ensure Docker service is started and enabled

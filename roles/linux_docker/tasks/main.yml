@@ -1,13 +1,13 @@
 ---
 - name: Include task initial docker config
   ansible.builtin.include_tasks: task_initial_docker.yml 
-  when: "'docker' in group_names"
+  when: "'docker_host' in (host_tags | default([]))"
   tags:
     - initial
 
 - name: Include task to update docker images
   ansible.builtin.include_tasks: task_docker.yml 
-  when: "'docker' in group_names"
+  when: "'docker_host' in (host_tags | default([]))"
   tags:
     - initial
     - update
