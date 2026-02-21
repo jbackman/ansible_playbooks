@@ -54,23 +54,32 @@
   become: "{{ become_user | default(true) }}"
   when: ansible_os_family == 'Debian'
 
-- name: Add docker package (Alpine)
+- name: Add docker and py3-pip packages (Alpine)
   community.general.apk:
     name: 
       - docker
       - py3-pip
-      - py3-docker
       - docker-compose
     state: latest
     update_cache: yes
   become: "{{ become_user | default(true) }}"
   when: ansible_os_family == 'Alpine'
 
-- name: Install python modules for managing docker
+- name: Install python modules for managing docker (Alpine)
   ansible.builtin.pip:
     name: 
       - docker
       - docker-compose
+    state: latest
+  become: "{{ become_user | default(true) }}"
+  when: ansible_os_family == 'Alpine'
+
+- name: Install python modules for managing docker (Non-Alpine)
+  ansible.builtin.pip:
+    name: 
+      - docker
+      - docker-compose
+    state: latest
   become: "{{ become_user | default(true) }}"
   when: ansible_os_family != 'Alpine'
 
