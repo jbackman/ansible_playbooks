@@ -12,20 +12,36 @@
 
     - name: Gather facts
       setup:
+      tags:
+       - always
 
   roles:
     - role: linux_baseline
+      tags:
+       - always
     - role: linux_update
+      tags:
+       - always
     - role: linux_netbird
       when: 
         - "'skip_netbird' not in (host_tags | default([]))"
+      tags:
+       - always
     - role: linux_system
+      tags:
+       - always
     - role: linux_zabbix
       when: 
         - "'skip_zabbix' not in (host_tags | default([]))"
+      tags:
+       - always
     - role: linux_proxmox_client
       when: 
         - "'skip_backup' not in (host_tags | default([]))"
+      tags:
+       - always
     - role: linux_docker
       when: 
         - "'docker_host' in (host_tags | default([]))"
+      tags:
+       - always

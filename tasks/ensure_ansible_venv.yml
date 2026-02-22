@@ -10,6 +10,8 @@
   ansible.builtin.stat:
     path: /opt/ansible-venv/bin/python
   register: ansible_venv_stat
+  tags:
+    - always
 
 - name: Create ansible-venv if it doesn't exist
   become: yes
@@ -28,7 +30,11 @@
     fi
   when: not ansible_venv_stat.stat.exists
   changed_when: true
+  tags:
+    - always
 
 - name: Set ansible_python_interpreter for the remainder of the play
   ansible.builtin.set_fact:
     ansible_python_interpreter: /opt/ansible-venv/bin/python
+  tags:
+    - always
