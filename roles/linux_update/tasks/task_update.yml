@@ -47,6 +47,11 @@
 
 - name: Check if Reboot is Required
   block:
+    - name: Get system uptime in seconds
+      ansible.builtin.shell: cat /proc/uptime | awk '{print $1}'
+      register: uptime_seconds
+      changed_when: false
+
     - name: Check if a reboot is needed (Debian/Ubuntu/Alpine)
       ansible.builtin.stat:
         path: "{{ item }}"
@@ -68,14 +73,24 @@
 
 - name: Reboot if Required
   ansible.builtin.reboot:
-    msg: "Reboot initiated by Ansible for system updates"
+    msg: "Reboot initiated by Ansible (Reason: {{ reboot_reason }})"
     connect_timeout: 5
     reboot_timeout: 300
     pre_reboot_delay: 0
     post_reboot_delay: 30
     test_command: uptime
-  when: >
-    (reboot_required_file is defined and reboot_required_file.results is defined and
-     reboot_required_file.results | selectattr('stat.exists', 'defined') | selectattr('stat.exists', 'equalto', true) | list | length > 0) or
-    (reboot_required_cmd is defined and reboot_required_cmd.rc | default(0) == 1)
+  vars:
+    is_long_uptime: "{{ (uptime_seconds.stdout | default(0) | float) > (30 * 86400) }}"
+    is_not_proxmox: "{{ 'proxmox_server' not in (host_tags | default([])) }}"
+    reboot_required_by_pkg: >
+      (reboot_required_file is defined and reboot_required_file.results is defined and
+       reboot_required_file.results | selectattr('stat.exists', 'defined') | selectattr('stat.exists', 'equalto', true) | list | length > 0) or
+      (reboot_required_cmd is defined and reboot_required_cmd.rc | default(0) == 1)
+    reboot_reason: >
+      {% if reboot_required_by_pkg and is_long_uptime and is_not_proxmox %}System updates and uptime > 30 days
+      {% elif reboot_required_by_pkg %}System updates
+      {% elif is_long_uptime and is_not_proxmox %}Uptime > 30 days
+      {% else %}Maintenance
+      {% endif %}
+  when: reboot_required_by_pkg or (is_long_uptime and is_not_proxmox)
   become: yes
