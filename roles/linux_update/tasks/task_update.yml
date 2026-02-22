@@ -92,5 +92,5 @@
       {% elif is_long_uptime and is_not_proxmox %}Uptime > 30 days
       {% else %}Maintenance
       {% endif %}
-  when: reboot_required_by_pkg or (is_long_uptime and is_not_proxmox)
+  when: (reboot_required_by_pkg | bool) or (is_long_uptime | bool and is_not_proxmox | bool)
   become: yes
