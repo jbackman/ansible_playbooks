@@ -22,10 +22,3 @@
     backup: yes
   notify: "update ca trust"
   become: yes
-
-- name: Remove unneeded cert
-  ansible.builtin.file:
-    path: "{{ ca_cert_dest }}/HOME_PKI_INTERMEDIATE_CA_a15f3d75541864f90fb7a3dab065eba2.crt"
-    state: absent
-  notify: "update ca trust"
-  become: yes

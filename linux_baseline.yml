@@ -18,7 +18,6 @@
       when: 
         - "'skip_netbird' not in (host_tags | default([]))"
     - role: linux_system
-    - role: linux_snmp
     - role: linux_zabbix
       when: 
         - "'skip_zabbix' not in (host_tags | default([]))"
