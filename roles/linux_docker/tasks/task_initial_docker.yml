@@ -1,42 +1,55 @@
 ---
 
+- name: Ensure /etc/apt/keyrings directory exists
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+  become: "{{ become_user | default(true) }}"
+  when: ansible_os_family == 'Debian'
+
 - name: Add required packages for docker (Debian family)
   ansible.builtin.apt:
     name: 
+      - apt-transport-https
       - ca-certificates
       - curl
+      - software-properties-common
+      - python3-pip
     state: latest
     update_cache: yes
   become: "{{ become_user | default(true) }}"
   when: ansible_os_family == 'Debian'
 
-- name: Add Ubuntu GPG key for docker
-  ansible.builtin.apt_key:
+- name: Download Docker GPG key (Ubuntu)
+  ansible.builtin.get_url:
     url: https://download.docker.com/linux/ubuntu/gpg
-    state: present 
+    dest: /etc/apt/keyrings/docker.asc
+    mode: '0644'
   become: "{{ become_user | default(true) }}"
   when: ansible_distribution == 'Ubuntu'
 
 - name: Add Ubuntu docker repository
   ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
     state: present
   become: "{{ become_user | default(true) }}"
   when: ansible_distribution == 'Ubuntu'
 
-- name: Add Debian GPG key for docker
-  ansible.builtin.apt_key:
+- name: Download Docker GPG key (Debian)
+  ansible.builtin.get_url:
     url: https://download.docker.com/linux/debian/gpg
-    state: present 
+    dest: /etc/apt/keyrings/docker.asc
+    mode: '0644'
   become: "{{ become_user | default(true) }}"
-  when: ansible_distribution == 'Debian' and ansible_os_family != "Ubuntu"
+  when: ansible_distribution == 'Debian'
 
 - name: Add Debian docker repository
   ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
     state: present
   become: "{{ become_user | default(true) }}"
-  when: ansible_distribution == 'Debian' and ansible_os_family != "Ubuntu"
+  when: ansible_distribution == 'Debian'
 
 - name: Add docker package (Debian family)
   ansible.builtin.apt:
@@ -51,7 +64,7 @@
     state: latest
     update_cache: yes
   become: "{{ become_user | default(true) }}"
-  when: ansible_os_family == 'Debian' and ansible_os_family != "Ubuntu"
+  when: ansible_os_family == 'Debian'
 
 - name: Add docker and py3-pip packages (Alpine)
   community.general.apk:
@@ -88,4 +101,3 @@
     state: started
     enabled: yes
   become: "{{ become_user | default(true) }}"
-
