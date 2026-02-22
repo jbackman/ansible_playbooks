@@ -1,6 +1,6 @@
 ---
 - name: Update all Linux servers
-  hosts: all:!fortigate:!localhost
+  hosts: all:!fortigate:!localhost!semaphore
   gather_facts: no
   pre_tasks:
     - name: Ensure the ansible-venv exists and is used

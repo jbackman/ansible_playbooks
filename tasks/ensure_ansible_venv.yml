@@ -16,7 +16,7 @@
       fi
       python3 -m venv /opt/ansible-venv
       /opt/ansible-venv/bin/pip install --upgrade pip
-      /opt/ansible-venv/bin/pip install docker docker-compose requests
+      /opt/ansible-venv/bin/pip install requests
     fi
   when: not ansible_venv_stat.stat.exists
   changed_when: true
