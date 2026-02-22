@@ -1,4 +1,9 @@
 ---
+- name: reset venv if tag is set
+  ansible.builtin.path:
+    path: /opt/ansible-venv
+    state: absent
+  when: "'reset_venv' in (host_tags | default([]))"
 
 - name: Check if the ansible-venv exists
   ansible.builtin.stat:
