@@ -3,12 +3,10 @@
 - name: Add required packages for docker (Debian family)
   ansible.builtin.apt:
     name: 
-      - apt-transport-https
       - ca-certificates
       - curl
-      - software-properties-common
-      - python3-pip
     state: latest
+    update_cache: yes
   become: "{{ become_user | default(true) }}"
   when: ansible_os_family == 'Debian'
 
@@ -47,6 +45,7 @@
       - docker-ce-cli
       - containerd.io
       - docker-compose-plugin
+      - docker-buildx-plugin
       - python3-docker
       - python3-docker-compose
     state: latest
