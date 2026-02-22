@@ -63,16 +63,6 @@
   become: "{{ become_user | default(true) }}"
   when: ansible_os_family == 'Debian'
 
-- name: Add docker python package (Debian family)
-  ansible.builtin.apt:
-    name: 
-      - python3-docker
-      - python3-docker-compose
-    state: latest
-    update_cache: yes
-  become: "{{ become_user | default(true) }}"
-  when: ansible_distribution == 'Debian'
-
 - name: Add docker and py3-pip packages (Alpine)
   community.general.apk:
     name: 
@@ -84,23 +74,13 @@
   become: "{{ become_user | default(true) }}"
   when: ansible_os_family == 'Alpine'
 
-- name: Install python modules for managing docker (Alpine)
+- name: Install python modules for managing docker
   ansible.builtin.pip:
     name: 
       - docker
       - docker-compose
     state: latest
   become: "{{ become_user | default(true) }}"
-  when: ansible_os_family == 'Alpine'
-
-- name: Install python modules for managing docker (Non-Alpine)
-  ansible.builtin.pip:
-    name: 
-      - docker
-      - docker-compose
-    state: latest
-  become: "{{ become_user | default(true) }}"
-  when: ansible_os_family != 'Alpine'
 
 - name: Ensure Docker service is started and enabled
   ansible.builtin.service:
