@@ -29,14 +29,14 @@
     url: https://download.docker.com/linux/debian/gpg
     state: present 
   become: "{{ become_user | default(true) }}"
-  when: ansible_distribution == 'Debian'
+  when: ansible_distribution == 'Debian' and ansible_os_family != "Ubuntu"
 
 - name: Add Debian docker repository
   ansible.builtin.apt_repository:
     repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
     state: present
   become: "{{ become_user | default(true) }}"
-  when: ansible_distribution == 'Debian'
+  when: ansible_distribution == 'Debian' and ansible_os_family != "Ubuntu"
 
 - name: Add docker package (Debian family)
   ansible.builtin.apt:
@@ -51,7 +51,7 @@
     state: latest
     update_cache: yes
   become: "{{ become_user | default(true) }}"
-  when: ansible_os_family == 'Debian'
+  when: ansible_os_family == 'Debian' and ansible_os_family != "Ubuntu"
 
 - name: Add docker and py3-pip packages (Alpine)
   community.general.apk:
