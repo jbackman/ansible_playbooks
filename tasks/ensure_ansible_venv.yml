@@ -1,11 +1,4 @@
 ---
-- name: reset venv if tag is set
-  ansible.builtin.file:
-    path: /opt/ansible-venv
-    state: absent
-  tags:
-    - reset_venv
-
 - name: Check if the ansible-venv exists
   ansible.builtin.stat:
     path: /opt/ansible-venv/bin/python
