@@ -7,6 +7,8 @@
   pre_tasks:
     - name: Ensure the ansible-venv exists and is used
       ansible.builtin.include_tasks: tasks/ensure_ansible_venv.yml
+      tags:
+       - always
 
     - name: Gather facts
       setup:
