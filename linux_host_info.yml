@@ -1,0 +1,10 @@
+---
+- name: Show host metadata
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Display host groups and tags
+      debug:
+        msg:
+          - "Groups: {{ group_names }}"
+          - "Tags: {{ host_tags | default([]) }}"
