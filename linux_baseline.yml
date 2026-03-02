@@ -24,7 +24,7 @@
        - always
     - role: linux_netbird
       when: 
-        - "'skip_netbird' not in (host_tags | default([]))"
+        - "'skip_netbird' not in (tags | default([]))"
       tags:
        - always
     - role: linux_system
@@ -32,16 +32,16 @@
        - always
     - role: linux_zabbix
       when: 
-        - "'skip_zabbix' not in (host_tags | default([]))"
+        - "'skip_zabbix' not in (tags | default([]))"
       tags:
        - always
     - role: linux_proxmox_client
       when: 
-        - "'skip_backup' not in (host_tags | default([]))"
+        - "'skip_backup' not in (tags | default([]))"
       tags:
        - always
     - role: linux_docker
       when: 
-        - "'docker_host' in (host_tags | default([]))"
+        - "'docker' in (tags | default([]))"
       tags:
        - always

@@ -81,7 +81,7 @@
     test_command: uptime
   vars:
     is_long_uptime: "{{ (uptime_seconds.stdout | default(0) | float) > (30 * 86400) }}"
-    is_not_proxmox: "{{ 'proxmox_server' not in (host_tags | default([])) }}"
+    is_not_proxmox: "{{ 'proxmox_server' not in (tags | default([])) }}"
     reboot_required_by_pkg: >
       (reboot_required_file is defined and reboot_required_file.results is defined and
        reboot_required_file.results | selectattr('stat.exists', 'defined') | selectattr('stat.exists', 'equalto', true) | list | length > 0) or
