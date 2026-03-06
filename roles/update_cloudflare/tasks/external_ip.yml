@@ -1,0 +1,26 @@
+---
+- name: Get the external IP 
+  uri:
+    url: https://atlhost2.jitonline.net/ip
+    return_content: yes
+  register: external_ip
+  ignore_errors: true
+  
+- name: Set ext_ip fact
+  set_fact:
+    ext_ip: "{{ external_ip.json.ip | split(',')}}"
+
+- name: Debug home record
+  ansible.builtin.debug:
+    msg:
+      - "external ip: {{ ext_ip[0] }}"
+
+- name: Create home record
+  community.general.cloudflare_dns: 
+    record: "home-v"
+    type: "A"
+    zone: "jitonline.net"
+    value: "{{ ext_ip[0] }}"
+    api_token: "{{ cloudflare_api_token }}"
+  ignore_errors: true
+

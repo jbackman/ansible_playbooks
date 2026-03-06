@@ -1,0 +1,29 @@
+---
+
+- name: Fetch DNS records from NetBox Cloudflare plugin
+  set_fact:
+    raw_dns_records: "{{ query('netbox.netbox.nb_lookup', 'records', validate_certs=false, plugin='netbox-dns') }}"
+
+- name: Set Cloudflare Records from NetBox
+  community.general.cloudflare_dns:
+      record: "{{ item.value.name }}"
+      type: "{{ item.value.type }}"
+      zone: "{{ item.value.zone.name }}"
+      value: "{{ item.value.absolute_value | regex_replace('\\.$', '') }}"
+      api_token: "{{ cloudflare_api_token }}"
+  loop: "{{ raw_dns_records }}"
+  loop_control:
+     label: "{{ item.value.name }}.{{ item.value.zone.name }}"
+  when: raw_dns_records is defined and raw_dns_records | length > 0
+
+- name: DEBUG Cloudflare Records from NetBox
+  ansible.builtin.debug:
+    msg:
+      - "record: {{ item.value.name }}"
+      - "type: {{ item.value.type }}"
+      - "zone: {{ item.value.zone.name }}"
+      - "value: {{ item.value.absolute_value | regex_replace('\\.$', '') }}"
+  loop: "{{ raw_dns_records }}"
+  loop_control:
+     label: "{{ item.value.name }}.{{ item.value.zone.name }}"
+  when: raw_dns_records is defined and raw_dns_records | length > 0 and item.value.name != 'home-v'

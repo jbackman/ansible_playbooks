@@ -1,24 +1,6 @@
 ---
-- name: Get external IP
-  include_tasks: get_external_ip.yml
+- name: Set external IP
+  include_tasks: external_ip.yml
 
-- name: Set ext_ip fact
-  set_fact:
-    ext_ip: "{{ external_ip.json.ip | split(',')}}"
-
-- name: Create home record
-  set_fact: 
-    external_record:
-      record: "{{ home_record }}"
-      type: "A"
-      zone: "{{ home_zone }}"
-      value: "{{ ext_ip[0] }}"
-  ignore_errors: true
-  
-- name: Create home record
-  set_fact: 
-    cloudflare_dns_records: "{{ cloudflare_dns_records + [ external_record ] }}"
-  when: external_record is defined
-
-- name: Update Cloudflare 
-  include_tasks: update_dns.yml
+- name: Set Cloudflare from Netbox 
+  include_tasks: netbox_dns.yml
