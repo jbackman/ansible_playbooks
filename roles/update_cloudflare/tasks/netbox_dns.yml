@@ -11,9 +11,10 @@
       zone: "{{ item.value.zone.name }}"
       value: "{{ item.value.absolute_value | regex_replace('\\.$', '') }}"
       proxied: "{{ 'proxied' in item.value.tags | map(attribute='name') | list}}"
+      state: "{{ 'present' if item.value.status == 'active' else 'absent' }} " 
       api_token: "{{ cloudflare_api_token }}"
   loop: "{{ raw_dns_records }}"
   loop_control:
      label: "{{ item.value.name }}.{{ item.value.zone.name }}"
-  when: raw_dns_records is defined and raw_dns_records | length > 0 and item.value.type in [ 'A', 'AAAA', 'CNAME' ] and item.value.status == 'active'
+  when: raw_dns_records is defined and raw_dns_records | length > 0 and item.value.type in [ 'A', 'AAAA', 'CNAME' ] 
 
