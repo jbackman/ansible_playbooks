@@ -2,7 +2,6 @@
 collections:
   - name: ansible.utils
   - name: community.general
-  - name: community.cloudflare
   - name: community.docker
   - name: fortinet.fortios
   - name: netbox.netbox
