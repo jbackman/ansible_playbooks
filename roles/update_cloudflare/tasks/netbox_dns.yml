@@ -10,7 +10,7 @@
       type: "{{ item.value.type }}"
       zone: "{{ item.value.zone.name }}"
       value: "{{ item.value.absolute_value | regex_replace('\\.$', '') }}"
-      proxied: "{{ proxied in item.value.tags }}"
+      proxied: "{{ 'proxied' in item.value.tags }}"
       api_token: "{{ cloudflare_api_token }}"
   loop: "{{ raw_dns_records }}"
   loop_control:
