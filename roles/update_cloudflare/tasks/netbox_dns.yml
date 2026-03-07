@@ -16,5 +16,5 @@
   loop: "{{ raw_dns_records }}"
   loop_control:
      label: "{{ item.value.name }}.{{ item.value.zone.name }}"
-  when: raw_dns_records is defined and raw_dns_records | length > 0 and item.value.type in [ 'A', 'AAAA', 'CNAME' ] 
+  when: raw_dns_records is defined and raw_dns_records | length > 0 and item.value.type in [ 'A', 'AAAA', 'CNAME' ] and item.value.zone.name == cloudflare_dns_zone
 

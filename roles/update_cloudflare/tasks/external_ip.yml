@@ -1,7 +1,7 @@
 ---
 - name: Get the external IP 
   uri:
-    url: https://atlhost2.jitonline.net/ip
+    url: "{{ external_ip_api }}"
     return_content: yes
   register: external_ip
   ignore_errors: true
