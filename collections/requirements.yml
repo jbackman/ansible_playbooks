@@ -5,6 +5,7 @@ collections:
   - name: community.docker
   - name: fortinet.fortios
   - name: netbox.netbox
+    version: '>=3.19.0'
   - name: smallstep.cli
   - name: trfore.smallstep
 

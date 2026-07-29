@@ -7,19 +7,19 @@
         force_apt_get: yes
         cache_valid_time: 3600
         upgrade: dist
-      when: ansible_os_family == 'Debian'
+      when: ansible_facts['os_family'] == 'Debian'
 
     - name: Update packages (CentOS/RedHat)
       ansible.builtin.dnf:
         name: "*"
         state: latest
-      when: ansible_os_family == 'RedHat'
+      when: ansible_facts['os_family'] == 'RedHat'
 
     - name: Update packages (Alpine)
       community.general.apk:
         update_cache: yes
         upgrade: yes
-      when: ansible_os_family == 'Alpine'
+      when: ansible_facts['os_family'] == 'Alpine'
   become: yes
 
 - name: Update Docker Compose applications
@@ -59,7 +59,7 @@
       loop:
         - /var/run/reboot-required
         - /run/reboot-required
-      when: ansible_os_family in ['Debian', 'Alpine']
+      when: ansible_facts['os_family'] in ['Debian', 'Alpine']
 
     - name: Check if a reboot is needed (CentOS/RedHat)
       ansible.builtin.shell:
@@ -68,7 +68,7 @@
       register: reboot_required_cmd
       failed_when: false
       changed_when: false
-      when: ansible_os_family == 'RedHat'
+      when: ansible_facts['os_family'] == 'RedHat'
   become: yes
 
 - name: Reboot if Required

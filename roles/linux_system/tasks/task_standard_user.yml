@@ -1,7 +1,7 @@
 ---
 - name: Set sudo group fact
   ansible.builtin.set_fact:
-    sudo_group: "{{ 'wheel' if ansible_os_family == 'Alpine' else 'sudo' }}"
+    sudo_group: "{{ 'wheel' if ansible_facts['os_family'] == 'Alpine' else 'sudo' }}"
 
 - name: Ensure standard user exists
   ansible.builtin.user:

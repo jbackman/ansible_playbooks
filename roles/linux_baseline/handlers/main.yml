@@ -9,6 +9,6 @@
   listen: "update ca trust"
   vars:
     update_ca_cmd: >-
-      {% if ansible_os_family == 'RedHat' %}update-ca-trust extract
+      {% if ansible_facts['os_family'] == 'RedHat' %}update-ca-trust extract
       {% else %}update-ca-certificates
       {% endif %}

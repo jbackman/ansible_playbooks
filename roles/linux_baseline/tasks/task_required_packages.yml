@@ -11,7 +11,7 @@
       - "vim"
     state: latest
     update_cache: yes
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian'
   become: yes
 
 - name: Install required packages (Alpine)
@@ -30,7 +30,7 @@
       - "vim"
     state: latest
     update_cache: yes
-  when: ansible_os_family == 'Alpine'
+  when: ansible_facts['os_family'] == 'Alpine'
   become: yes
 
 - name: Install upgrade packages (Ubuntu)
@@ -38,7 +38,7 @@
     name: 
       - "ubuntu-release-upgrader-core"
     state: latest
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Ubuntu'
   become: yes
 
 - name: Remove Apache
@@ -47,11 +47,11 @@
       - apache2
     state: absent
   when: 
-    - ansible_os_family == 'Debian'
+    - ansible_facts['os_family'] == 'Debian'
     - "'apache' not in group_names"
   become: yes
 
 - name: Install the latest version of step CLI
   ansible.builtin.include_role:
     name: smallstep.cli.install
-  when: ansible_os_family != 'Alpine'
+  when: ansible_facts['os_family'] != 'Alpine'

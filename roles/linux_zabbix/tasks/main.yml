@@ -8,22 +8,22 @@
 
 - name: Install Zabbix Repository Debian
   apt:
-    deb: "https://repo.zabbix.com/zabbix/{{ zabbix_version }}/release/{{ ansible_distribution | lower }}/pool/main/z/zabbix-release/zabbix-release_latest+{{ ansible_distribution | lower }}{{ ansible_distribution_major_version }}_all.deb"
+    deb: "https://repo.zabbix.com/zabbix/{{ zabbix_version }}/release/{{ ansible_facts['distribution'] | lower }}/pool/main/z/zabbix-release/zabbix-release_latest+{{ ansible_facts['distribution'] | lower }}{{ ansible_facts['distribution_major_version'] }}_all.deb"
     state: present
-  when: ansible_distribution == 'Debian'
+  when: ansible_facts['distribution'] == 'Debian'
 
 - name: Install Zabbix Repository Ubuntu
   apt:
-    deb: "https://repo.zabbix.com/zabbix/{{ zabbix_version }}/release/{{ ansible_distribution | lower }}/pool/main/z/zabbix-release/zabbix-release_latest_{{ zabbix_version }}+{{ ansible_distribution | lower }}{{ ansible_distribution_version }}_all.deb"
+    deb: "https://repo.zabbix.com/zabbix/{{ zabbix_version }}/release/{{ ansible_facts['distribution'] | lower }}/pool/main/z/zabbix-release/zabbix-release_latest_{{ zabbix_version }}+{{ ansible_facts['distribution'] | lower }}{{ ansible_facts['distribution_version'] }}_all.deb"
     state: present
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Ubuntu'
 
 - name: Install Zabbix Agent2 (Debian/Ubuntu)
   apt:
     name: zabbix-agent2
     update_cache: yes
     state: present
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian'
 
 - name: Install Zabbix Agent2 (Alpine)
   community.general.apk:
@@ -32,7 +32,7 @@
       - zabbix-agent2-openrc
     update_cache: yes
     state: present
-  when: ansible_os_family == 'Alpine'
+  when: ansible_facts['os_family'] == 'Alpine'
 
 - name: Configure Zabbix Agent2 from template
   template:

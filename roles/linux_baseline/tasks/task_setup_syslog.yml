@@ -73,5 +73,5 @@
     state: stopped
     enabled: false
   become: yes
-  when: ansible_os_family == 'Alpine'
+  when: ansible_facts['os_family'] == 'Alpine'
   failed_when: false # Busybox syslog might not be running or present as a service name in all variants

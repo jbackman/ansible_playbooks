@@ -51,8 +51,8 @@
         path: "{{ pbs_temp_dir.path }}"
         state: absent
   when: 
-    - ansible_os_family == 'Alpine'
-    - ansible_architecture in ['x86_64', 'amd64', 'x86']
+    - ansible_facts['os_family'] == 'Alpine'
+    - ansible_facts['architecture'] in ['x86_64', 'amd64', 'x86']
   become: yes
 
 - name: Proxmox Backup Client Installation Block (Debian/Ubuntu)
@@ -82,7 +82,7 @@
         owner: root
         group: root
         mode: '0644'
-      when: (ansible_distribution == "Debian" and ansible_distribution_major_version == "13")
+      when: (ansible_facts['distribution'] == "Debian" and ansible_facts['distribution_major_version'] == "13")
       register: pbs_repo_trixie
 
     # Fallback logic for older Debian/Ubuntu versions
@@ -91,7 +91,7 @@
         repo: "deb [signed-by={{ pbs_gpg_key_dest }}] http://download.proxmox.com/debian/pbs-client trixie main"
         state: present
         filename: pbs-client
-      when: not (ansible_distribution == "Debian" and ansible_distribution_major_version == "13")
+      when: not (ansible_facts['distribution'] == "Debian" and ansible_facts['distribution_major_version'] == "13")
       register: pbs_repo_legacy
 
     - name: Install proxmox-backup-client Debian
@@ -99,27 +99,27 @@
         name: proxmox-backup-client
         state: present
         update_cache: yes
-      when: ansible_distribution == "Debian"
+      when: ansible_facts['distribution'] == "Debian"
     
     - name: Install proxmox-backup-client Ubuntu
       apt:
         name: proxmox-backup-client-static
         state: present
         update_cache: yes
-      when: ansible_distribution == "Ubuntu"
+      when: ansible_facts['distribution'] == "Ubuntu"
 
   # This condition ensures the entire block is skipped on non-x86 hardware or non-Debian family
   when: 
-    - ansible_architecture in ['x86_64', 'amd64', 'x86']
-    - ansible_os_family == 'Debian'
+    - ansible_facts['architecture'] in ['x86_64', 'amd64', 'x86']
+    - ansible_facts['os_family'] == 'Debian'
   become: yes
 
 - name: Install the arm package directly (Debian/Ubuntu)
   ansible.builtin.apt:
     deb: "{{ proxmox_arm_client }}"
   when: 
-    - ansible_architecture in ['arm64', 'aarch64']
-    - ansible_os_family == 'Debian'
+    - ansible_facts['architecture'] in ['arm64', 'aarch64']
+    - ansible_facts['os_family'] == 'Debian'
   become: yes
 
 - name: Initialize pbs_host as null
@@ -163,14 +163,14 @@
 
 - name: Ensure cron package is installed
   ansible.builtin.package:
-    name: "{{ 'dcron' if ansible_os_family == 'Alpine' else 'cron' }}"
+    name: "{{ 'dcron' if ansible_facts['os_family'] == 'Alpine' else 'cron' }}"
     state: present
     update_cache: yes
   become: yes
 
 - name: Ensure cron service is started and enabled
   ansible.builtin.service:
-    name: "{{ 'crond' if ansible_os_family == 'Alpine' else 'cron' }}"
+    name: "{{ 'crond' if ansible_facts['os_family'] == 'Alpine' else 'cron' }}"
     state: started
     enabled: yes
   become: yes
